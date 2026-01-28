@@ -1,0 +1,99 @@
+@startuml
+  skinparam packageStyle rectangle
+
+  package "com.cpz.processingtemplate.main" {
+    class Launcher
+    class Sketch
+  }
+
+  package "com.cpz.processingtemplate.config" {
+    class Config
+    class ConfigLog
+  }
+
+  package "com.cpz.processingtemplate.model" {
+    class AppState
+  }
+
+  package "com.cpz.processingtemplate.viewmodel" {
+    class MainViewModel
+  }
+
+  package "com.cpz.processingtemplate.view" {
+    class SketchView
+  }
+
+  package "com.cpz.processingtemplate.view.dto" {
+    class ParametrosRectangulo
+    class ParametrosElipse
+  }
+
+  package "com.cpz.processingtemplate.input" {
+    class Mouse
+    class Teclado
+  }
+
+  package "com.cpz.processingtemplate.interfaces" {
+    interface Input
+    interface Parametros
+  }
+
+  package "com.cpz.processingtemplate.logging" {
+    class Log
+    class LogFormatter
+    class MensajeLog
+  }
+
+  package "com.cpz.processingtemplate.util" {
+    class Constantes
+    enum MouseButton
+    class Tools <<Utility>>
+  }
+
+  package "com.cpz.processingtemplate.util.time" {
+    class IntervalTimer
+  }
+
+  ' Inheritance / Implements
+  Sketch --|> PApplet
+  Log --|> Logger
+  LogFormatter --|> SimpleFormatter
+  Mouse ..|> Input
+  Teclado ..|> Input
+  ParametrosRectangulo ..|> Parametros
+  ParametrosElipse ..|> Parametros
+
+  ' Compositions / Associations
+  Sketch *-- MainViewModel
+  Sketch *-- SketchView
+  Sketch *-- Mouse
+  Sketch *-- Teclado
+  MainViewModel *-- AppState
+  MainViewModel *-- IntervalTimer
+
+  ' Dependencies
+  Launcher ..> Config
+  Launcher ..> Sketch
+  Launcher ..> Log
+  Launcher ..> MensajeLog
+
+  Config ..> Launcher
+  Config ..> Sketch
+
+  ConfigLog ..> LogFormatter
+
+  Sketch ..> ParametrosRectangulo
+  Sketch ..> ParametrosElipse
+
+  SketchView ..> Parametros
+  SketchView ..> ParametrosRectangulo
+  SketchView ..> ParametrosElipse
+
+  Mouse ..> MainViewModel
+  Mouse ..> MouseButton
+  Teclado ..> MainViewModel
+
+  MainViewModel ..> Constantes
+  MainViewModel ..> MouseButton
+  Constantes ..> Tools
+  @enduml

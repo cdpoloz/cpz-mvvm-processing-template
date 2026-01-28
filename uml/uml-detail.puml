@@ -1,0 +1,202 @@
+@startuml
+  skinparam classAttributeIconSize 0
+
+  package "com.cpz.processingtemplate.main" {
+    class Sketch <<View>> {
+      - mouse: Mouse
+      - teclado: Teclado
+      - anchoPantalla: int
+      - altoPantalla: int
+      - suavizado: int
+      - fps: int
+      - factorHorizontalPantalla: float
+      - factorVerticalPantalla: float
+      - tituloVentana: String
+      - viewModel: MainViewModel
+      - sketchView: SketchView
+      --
+      + settings(): void
+      + setup(): void
+      + draw(): void
+      + inicializarSketch(periodoTimer: int): void
+      + mouseWheel(event: MouseEvent): void
+      + mouseReleased(): void
+      + mousePressed(): void
+      + mouseDragged(): void
+      + keyReleased(): void
+      + keyPressed(): void
+      + windowResized(): void
+      --
+      - update(): void
+      - aplicarEstadoVisual(): void
+      - dibujarUI(): void
+    }
+
+    class Launcher <<Infrastructure>>
+  }
+
+  package "com.cpz.processingtemplate.viewmodel" {
+    class MainViewModel <<ViewModel>> {
+      - appState: AppState
+      - timer: IntervalTimer
+      - ultimoTiempoDeInicio: long
+      --
+      + inicializar(periodoTimer: int): void
+      + onMouseReleased(mouseButton: MouseButton, o: Object...): void
+      + onMousePressed(mouseButton: int, o: Object...): void
+      + onMouseDragged(mouseButton: int, o: Object...): void
+      + onMouseWheel(d: int, o: Object...): void
+      + onKeyReleased(key: int, keyCode: int, o: Object...): void
+      + onKeyPressed(key: char, keyCode: int, o: Object...): void
+      + actualizarTimer(nowMillis: long): void
+      + getColorFondo(): int
+      + isCursorVisible(): boolean
+      + getColorRectangulo(): int
+      + getColorCirculo(): int
+      + getRectMode(): int
+      + isTimerRunning(): boolean
+      --
+      - conmutarColorFondo(): void
+    }
+  }
+
+  package "com.cpz.processingtemplate.model" {
+    class AppState <<Model>> {
+      - colorFondo: int
+      - colorRectangulo: int
+      - colorCirculo: int
+      - rectMode: int
+      - cursorVisible: boolean
+    }
+  }
+
+  package "com.cpz.processingtemplate.view" {
+    class SketchView <<Renderer>> {
+      - sketch: PApplet
+      --
+      + dibujarRectangulo(x: float, y: float, w: float, h: float, c: int): void
+      + dibujarElipse(x: float, y: float, w: float, h: float, c: int): void
+      + dibujar(p: Parametros): void
+      --
+      - dibujar(p: ParametrosRectangulo): void
+      - dibujar(p: ParametrosElipse): void
+    }
+  }
+
+  package "com.cpz.processingtemplate.util.time" {
+    class IntervalTimer <<Infrastructure>> {
+      - periodo: int
+      - running: boolean
+      - ultimoTiempoDeInicio: long
+      --
+      + start(tiempoActual: long): void
+      + stop(): void
+      + isFinPeriodo(tiempoActual: long): boolean
+    }
+  }
+
+  package "com.cpz.processingtemplate.input" {
+    class Mouse <<Infrastructure>>
+    class Teclado <<Infrastructure>>
+  }
+
+  package "com.cpz.processingtemplate.config" {
+    class Config <<Infrastructure>>
+    class ConfigLog <<Infrastructure>>
+  }
+
+  package "com.cpz.processingtemplate.logging" {
+    class Log <<Infrastructure>>
+    class LogFormatter <<Infrastructure>>
+    class MensajeLog <<Infrastructure>>
+  }
+
+  package "com.cpz.processingtemplate.view.dto" {
+    class ParametrosRectangulo <<DTO>>
+    class ParametrosElipse <<DTO>>
+  }
+
+  package "com.cpz.processingtemplate.interfaces" {
+    interface Parametros <<Infrastructure>>
+    interface Input <<Infrastructure>>
+  }
+
+  package "com.cpz.processingtemplate.util" {
+    class Constantes <<Infrastructure>>
+    enum MouseButton <<Infrastructure>>
+    class Tools <<Infrastructure>> {
+      + construirColor(s: String): int
+      + construirColor(red: float, green: float, blue: float, alpha: float): int
+      + construirColor(gray: float): int
+      + construirColor(gray: float, alpha: float): int
+    }
+  }
+
+  class "processing.core.PApplet" as PApplet <<Infrastructure>>
+  class "processing.event.MouseEvent" as MouseEvent <<Infrastructure>>
+
+  Sketch --|> PApplet
+  Sketch --> MainViewModel
+  Sketch --> SketchView
+  Sketch --> Mouse
+  Sketch --> Teclado
+  Sketch ..> ParametrosRectangulo
+  Sketch ..> ParametrosElipse
+
+  MainViewModel --> AppState
+  MainViewModel --> IntervalTimer
+  MainViewModel ..> MouseButton
+  MainViewModel ..> Constantes
+  Constantes ..> Tools
+
+  SketchView ..> Parametros
+  ParametrosRectangulo ..|> Parametros
+  ParametrosElipse ..|> Parametros
+
+  Mouse --> MainViewModel
+  Teclado --> MainViewModel
+
+  Launcher ..> Config
+  Launcher ..> Sketch
+  Launcher ..> Log
+
+  note left of Sketch::aplicarEstadoVisual
+  Aplica flags visuales (cursor, rectMode)
+  en base al estado del ViewModel.
+  end note
+
+  note right of Sketch
+  Punto de entrada de Processing:
+  settings/setup/draw + handlers.
+  Orquesta input -> ViewModel
+  y render via SketchView.
+  end note
+
+  note right of MainViewModel
+  Única lógica de negocio actual:
+  procesa input, controla timer,
+  y expone estado para la View.
+  end note
+
+  note right of AppState
+  Modelo puro de estado,
+  sin dependencias de Processing.
+  end note
+
+  note right of SketchView
+  Renderer: solo dibuja
+  según DTOs, sin lógica de estado.
+  end note
+
+  note right of IntervalTimer
+  Temporizador por intervalos,
+  tiempo inyectado por el invocante.
+  end note
+
+  note right of Parametros
+  Interface marcador para DTOs de render.
+  Permite sobrecarga tipada en SketchView.
+  end note
+
+
+  @enduml
