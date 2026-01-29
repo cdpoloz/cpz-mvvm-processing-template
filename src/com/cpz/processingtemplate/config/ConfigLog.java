@@ -15,26 +15,24 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 /**
- * Clase de configuración de logging para la aplicación.
+ * Configuración de bootstrap (paquete {@code config}) para la infraestructura de logging.
  * <p>
- * Proporciona métodos para obtener handlers de logging tanto para archivos como
- * para la consola, con formatos y niveles predefinidos.
+ * Proporciona handlers preconfigurados para salida a archivo y consola. Esta clase no
+ * contiene lógica de negocio y es usada por {@link com.cpz.processingtemplate.logging.Log}.
  * </p>
- * Los logs de archivo se almacenan en la carpeta "log" con nombres que incluyen la fecha actual.
  *
  * @author CPZ
  */
 public class ConfigLog {
 
     /**
-     * Crea y devuelve un {@link FileHandler} para registrar mensajes en un archivo.
+     * Crea un {@link FileHandler} que escribe en la carpeta {@code log} usando
+     * la fecha actual en el nombre del archivo.
      * <p>
-     * Si la carpeta "log" no existe, se crea automáticamente. El nombre del archivo
-     * incluye la fecha actual con formato "ExeraCSP_YYYY-MM-DD.log".
-     * El handler utiliza {@link LogFormatter} para formatear los mensajes y su nivel
-     * de log está configurado en {@link Level#INFO}.
+     * Usa {@link LogFormatter} y establece el nivel del handler en {@link Level#INFO}.
+     * </p>
      *
-     * @return un {@link FileHandler} configurado, o {@code null} si ocurre un error de IO.
+     * @return {@link FileHandler} configurado, o {@code null} si ocurre un error de IO
      */
     @Nullable
     public static FileHandler obtenerLogFileHandler() {
@@ -63,12 +61,12 @@ public class ConfigLog {
     }
 
     /**
-     * Crea y devuelve un {@link ConsoleHandler} para registrar mensajes en la consola.
+     * Crea un {@link ConsoleHandler} para logging en stdout.
      * <p>
-     * El handler utiliza {@link LogFormatter} para formatear los mensajes y su nivel
-     * de log está configurado en {@link Level#CONFIG}.
+     * Usa {@link LogFormatter} y establece el nivel del handler en {@link Level#CONFIG}.
+     * </p>
      *
-     * @return un {@link ConsoleHandler} configurado.
+     * @return {@link ConsoleHandler} configurado
      */
     @NotNull
     public static ConsoleHandler obtenerLogConsoleHandler() {

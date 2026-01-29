@@ -3,6 +3,12 @@ package com.cpz.processingtemplate.util;
 import static com.cpz.processingtemplate.util.Tools.construirColor;
 
 /**
+ * Catálogo de constantes sin state (paquete {@code util}) usado entre capas.
+ * <p>
+ * Proporciona key codes, rect modes compatibles con Processing y constantes de color ARGB
+ * construidas mediante {@link Tools}. Esta clase no contiene lógica de negocio.
+ * </p>
+ *
  * @author CPZ
  */
 public class Constantes {

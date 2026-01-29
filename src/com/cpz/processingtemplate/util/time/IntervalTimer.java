@@ -3,12 +3,13 @@ package com.cpz.processingtemplate.util.time;
 import lombok.Getter;
 
 /**
- * Temporizador de intervalos manejado por entrada de tiempo externa
- * Diseñado para lazos de render/simulación en donde el invocante proporciona el valor tiempoActual
- * Sin hilos, sleeps o dependencias de frameworks
+ * Timer de intervalos sin state (paquete {@code util.time}) impulsado por input de tiempo externo.
+ * <p>
+ * Diseñado para bucles de render donde el invocante proporciona el tiempo actual. No usa hilos,
+ * sleeps ni dependencias de frameworks.
+ * </p>
  *
  * @author CPZ
- *
  */
 public class IntervalTimer {
 
@@ -18,26 +19,39 @@ public class IntervalTimer {
     private long ultimoTiempoDeInicio;
     // </editor-fold>
 
+    /**
+     * Crea un timer con el periodo indicado.
+     *
+     * @param periodo intervalo en milisegundos
+     */
     public IntervalTimer(int periodo) {
         this.periodo = periodo;
         this.running = false;
         this.ultimoTiempoDeInicio = 0L;
     }
 
+    /**
+     * Inicia el timer desde el valor de tiempo indicado.
+     *
+     * @param tiempoActual tiempo actual en milisegundos
+     */
     public void start(long tiempoActual) {
         this.running = true;
         this.ultimoTiempoDeInicio = tiempoActual;
     }
 
+    /**
+     * Detiene el timer; los pulsos posteriores quedan deshabilitados hasta reiniciarlo.
+     */
     public void stop() {
         this.running = false;
     }
 
     /**
-     * Actualiza el timer y devuelve true cuando ocurre un pulso.
+     * Actualiza el timer y devuelve {@code true} cuando transcurre un periodo.
      *
-     * @param tiempoActual tiempo actual en milisegundos, proporcionado por el invocante
-     * @return true si ya pasó un intervalo y si fue emitido un pulso
+     * @param tiempoActual tiempo actual en milisegundos proporcionado por el invocante
+     * @return {@code true} si transcurrió el periodo y se emitió un pulso
      */
     public boolean isFinPeriodo(long tiempoActual) {
         if (!running) return false;

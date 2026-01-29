@@ -3,26 +3,20 @@ package com.cpz.processingtemplate.logging;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Clase utilitaria que genera mensajes de log estandarizados para errores y operaciones fallidas.
+ * Utilidad de infraestructura de logging (paquete {@code logging}) que proporciona mensajes
+ * de error estandarizados para el bootstrap de la aplicación y operaciones de IO.
  * <p>
- * Proporciona métodos estáticos para construir mensajes de error o aviso relacionados con archivos,
- * consultas de datos, actualizaciones de datos y carga de imágenes.
+ * Es una utilidad sin state y no contiene lógica de negocio.
  * </p>
- *
- * Ejemplo de uso:
- * <pre>
- *     String mensaje = MensajeLog.mensajeErrorArchivo("/ruta/al/archivo.txt");
- *     logger.severe(mensaje);
- * </pre>
  *
  * @author CPZ
  */
 public class MensajeLog {
 
     /**
-     * Genera un mensaje indicando que no se pudo cargar un archivo.
+     * Construye un mensaje indicando que no se pudo cargar un archivo.
      *
-     * @param ruta la ruta del archivo que no se pudo cargar
+     * @param ruta ruta del archivo que no se pudo cargar
      * @return mensaje de error formateado
      */
     @NotNull
@@ -33,10 +27,10 @@ public class MensajeLog {
     }
 
     /**
-     * Genera un mensaje indicando que no se pudo descargar un dato específico.
+     * Construye un mensaje indicando que no se pudo recuperar un dato específico.
      *
-     * @param codigo el código del dato que se intentó descargar
-     * @param mensajeException mensaje de excepción o detalle del error
+     * @param codigo identificador del dato solicitado
+     * @param mensajeException detalle de la excepción o descripción del fallo
      * @return mensaje de error formateado
      */
     @NotNull
@@ -47,9 +41,9 @@ public class MensajeLog {
     }
 
     /**
-     * Genera un mensaje indicando que no se pudieron descargar múltiples datos.
+     * Construye un mensaje indicando que no se pudieron recuperar múltiples datos.
      *
-     * @param mensajeException mensaje de excepción o detalle del error
+     * @param mensajeException detalle de la excepción o descripción del fallo
      * @return mensaje de error formateado
      */
     @NotNull
@@ -60,10 +54,10 @@ public class MensajeLog {
     }
 
     /**
-     * Genera un mensaje indicando que no se pudo actualizar un dato específico.
+     * Construye un mensaje indicando que no se pudo actualizar un dato específico.
      *
-     * @param codigo el código del dato que se intentó actualizar
-     * @param mensajeException mensaje de excepción o detalle del error
+     * @param codigo identificador del dato solicitado
+     * @param mensajeException detalle de la excepción o descripción del fallo
      * @return mensaje de error formateado
      */
     @NotNull
@@ -74,9 +68,9 @@ public class MensajeLog {
     }
 
     /**
-     * Genera un mensaje indicando que no se pudo finalizar la configuración.
+     * Construye un mensaje indicando que no se pudo finalizar el setup.
      *
-     * @param mensajeException mensaje de excepción o detalle del error
+     * @param mensajeException detalle de la excepción o descripción del fallo
      * @return mensaje de error formateado
      */
     @NotNull
@@ -87,9 +81,9 @@ public class MensajeLog {
     }
 
     /**
-     * Genera un mensaje indicando que no se pudo cargar una imagen específica.
+     * Construye un mensaje indicando que no se pudo cargar una imagen específica.
      *
-     * @param nombreArchivo el nombre del archivo de imagen
+     * @param nombreArchivo nombre del archivo de imagen que no se pudo cargar
      * @return mensaje de error formateado
      */
     @NotNull

@@ -11,10 +11,26 @@ import java.io.File;
 import static com.cpz.processingtemplate.main.Launcher.PROPS;
 
 /**
+ * Configuración de bootstrap (paquete {@code config}) que prepara el {@link Sketch}
+ * de Processing a partir de las propiedades de la aplicación.
+ * <p>
+ * Esta clase conecta parámetros de ventana y ajustes de tiempo de ejecución; no contiene lógica
+ * de negocio y no accede al state del ViewModel ni del Model.
+ * </p>
+ *
  * @author CPZ
  */
 public class Config {
 
+    /**
+     * Construye y configura la instancia principal de {@link Sketch} usando {@link Launcher#PROPS}.
+     * <p>
+     * Define el icono de la ventana, dimensiones de pantalla, factores de escala, suavizado,
+     * fps y título de la ventana.
+     * </p>
+     *
+     * @return {@link Sketch} configurado y listo para inicializarse
+     */
     @NotNull
     public static Sketch configuracionVentanaSketch() {
         // icono de la ventana
@@ -37,6 +53,11 @@ public class Config {
         return sketch;
     }
 
+    /**
+     * Inicializa el sketch indicado con los ajustes de timer desde properties.
+     *
+     * @param sketch instancia de sketch a inicializar
+     */
     public static void inicializarSketch(@NotNull Sketch sketch) {
         sketch.inicializarSketch(Integer.parseInt(Launcher.PROPS.getProperty("periodoTimer")));
     }

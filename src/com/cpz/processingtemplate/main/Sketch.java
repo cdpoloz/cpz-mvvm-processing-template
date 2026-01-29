@@ -15,6 +15,15 @@ import processing.event.MouseEvent;
 import static com.cpz.processingtemplate.main.Launcher.LOG;
 
 /**
+ * Componente de la capa View (paquete {@code main}) que orquesta el lifecycle de Processing.
+ * <p>
+ * Recibe tiempo e input desde Processing, delega decisiones al ViewModel, construye DTOs
+ * de render por frame y llama al Renderer ({@link SketchView}) para draw.
+ * </p>
+ * <p>
+ * Esta clase no implementa lógica de negocio y no muta el state del Model directamente.
+ * </p>
+ *
  * @author CPZ
  */
 public class Sketch extends PApplet {
@@ -29,14 +38,20 @@ public class Sketch extends PApplet {
     private final SketchView sketchView;
     // </editor-fold>
 
+    /**
+     * Crea la View principal, conectando el ViewModel y el Renderer.
+     */
     public Sketch() {
         viewModel = new MainViewModel(new AppState());
         sketchView = new SketchView(this);
     }
 
     /**
-     * Configuración inicial del sketch de Processing.
-     * Define tamaño de ventana y suavizado
+     * Fase settings de Processing.
+     * <p>
+     * Es llamada una vez por Processing antes de {@link #setup()}. Define tamaño de ventana
+     * y suavizado según la configuración proporcionada por {@link com.cpz.processingtemplate.config.Config}.
+     * </p>
      */
     @Override
     public void settings() {
@@ -47,7 +62,11 @@ public class Sketch extends PApplet {
     }
 
     /**
-     * Inicializa el sketch y configura el título de la ventana
+     * Fase setup de Processing.
+     * <p>
+     * Es llamada una vez después de {@link #settings()}. Define fps, título de la ventana
+     * y conecta los adaptadores de input.
+     * </p>
      */
     @Override
     public void setup() {
@@ -60,13 +79,25 @@ public class Sketch extends PApplet {
         LOG.info("Fin setup");
     }
 
+    /**
+     * Inicializa el ViewModel con aquellas variables necesarias para el estado inicial
+     * del Sketch. Para esta plantilla de ejemplo sería el periodo de timer configurado.
+     * <p>
+     * Es invocado por el bootstrap después de crear el Sketch.
+     * </p>
+     *
+     * @param periodoTimer periodo del timer en milisegundos
+     */
     public void inicializarSketch(int periodoTimer) {
         viewModel.inicializar(periodoTimer);
     }
 
     /**
-     * Bucle principal de Processing que se ejecuta en cada frame.
-     * Dependiendo del estado actual, llama a la configuración, actualización o renderizado correspondiente.
+     * Loop principal de Processing ejecutado una vez por frame.
+     * <p>
+     * Actualiza el tiempo del ViewModel, aplica el state visual a Processing y construye
+     * DTOs de render para el Renderer.
+     * </p>
      */
     @Override
     public void draw() {
@@ -75,16 +106,26 @@ public class Sketch extends PApplet {
         dibujarUI();
     }
 
+    /**
+     * Envía el tiempo actual al ViewModel para reglas basadas en tiempo.
+     */
     private void update() {
         viewModel.actualizarTimer(millis());
     }
 
+    /**
+     * Aplica el state visual del ViewModel a Processing. Para esta plantilla de
+     * ejemplo serían cursor y rectMode.
+     */
     private void aplicarEstadoVisual() {
         if (viewModel.isCursorVisible()) cursor();
         else noCursor();
         rectMode(viewModel.getRectMode());
     }
 
+    /**
+     * Construye DTOs de render para el frame actual y delega el dibujo al Renderer.
+     */
     private void dibujarUI() {
         background(viewModel.getColorFondo());
         ParametrosRectangulo rect = new ParametrosRectangulo(
@@ -106,13 +147,20 @@ public class Sketch extends PApplet {
         }
     }
 
-
     // <editor-fold defaultstate="collapsed" desc="*** interrupciones ***">
+    /**
+     * Reenvía el input de mouse wheel al adaptador de input.
+     *
+     * @param event evento de mouse wheel de Processing
+     */
     @Override
     public void mouseWheel(@NotNull MouseEvent event) {
         mouse.mouseWheel(event.getCount());
     }
 
+    /**
+     * Reenvía el input de mouse released al adaptador de input.
+     */
     @Override
     public void mouseReleased() {
         if (mouseButton == LEFT) mouse.mouseReleasedLeft();
@@ -121,6 +169,9 @@ public class Sketch extends PApplet {
         else mouse.mouseReleasedOther();
     }
 
+    /**
+     * Reenvía el input de mouse pressed al adaptador de input.
+     */
     @Override
     public void mousePressed() {
         if (mouseButton == LEFT) mouse.mousePressedLeft();
@@ -129,6 +180,9 @@ public class Sketch extends PApplet {
         else mouse.mousePressedOther();
     }
 
+    /**
+     * Reenvía el input de mouse dragged al adaptador de input.
+     */
     @Override
     public void mouseDragged() {
         if (mouseButton == LEFT) mouse.mouseDraggedLeft();
@@ -137,16 +191,28 @@ public class Sketch extends PApplet {
         else mouse.mouseDraggedOther();
     }
 
+    /**
+     * Reenvía el input de key release al adaptador de input.
+     */
     @Override
     public void keyReleased() {
         teclado.keyReleased(key, keyCode);
     }
 
+    /**
+     * Reenvía el input de key pressed al adaptador de input.
+     */
     @Override
     public void keyPressed() {
         teclado.keyPressed(key, keyCode);
     }
 
+    /**
+     * Callback de resize de la ventana de Processing.
+     * <p>
+     * No se define comportamiento en esta plantilla.
+     * </p>
+     */
     @Override
     public void windowResized() {
     }

@@ -6,28 +6,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Clase que extiende {@link Logger} para configurar un sistema de logging personalizado.
+ * Componente de infraestructura de logging (paquete {@code logging}) que configura los handlers
+ * definidos en {@link ConfigLog} y expone un {@link Logger} preconfigurado.
  * <p>
- * Esta clase añade automáticamente los handlers definidos en {@link ConfigLog} para
- * consola y archivo, y establece el nivel de logging a {@link Level#ALL}.
+ * Esta clase no participa en la lógica MVVM; centraliza únicamente la configuración de logging.
  * </p>
- *
- * <p>Uso típico:</p>
- * <pre>
- *     Log log = new Log("MiLogger");
- *     log.info("Mensaje de información");
- * </pre>
  *
  * @author CPZ
  */
 public class Log extends Logger {
 
     /**
-     * Construye un logger con el nombre especificado, agregando los handlers de
-     * consola y archivo definidos en {@link ConfigLog}, y estableciendo el nivel
-     * de logging a {@link Level#ALL}.
+     * Crea un logger con los handlers de consola y archivo configurados.
      *
-     * @param name el nombre del logger
+     * @param name nombre del logger
      */
     public Log(String name) {
         super(name, null);
