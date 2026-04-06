@@ -1,28 +1,46 @@
 package com.cpz.processingtemplate.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.math.BigDecimal;
 
 /**
- * Componente de la capa Model (paquete {@code model}) que almacena el state puro de la aplicación.
- * <p>
- * Esta clase no contiene lógica de negocio y no tiene dependencias de Processing. Todas las
- * mutaciones de state están a cargo del ViewModel.
- * </p>
- *
- * @author CPZ
+ * Estado puro de la aplicacion de ejemplo.
  */
 public class AppState {
 
-    /**
-     * Campos de state observable gestionados por el ViewModel.
-     */
-    // <editor-fold defaultstate="collapsed" desc="*** variables ***">
-    private @Setter @Getter int colorFondo;
-    private @Setter @Getter int colorRectangulo;
-    private @Setter @Getter int colorCirculo;
-    private @Setter @Getter int rectMode;
-    private @Setter @Getter boolean cursorVisible;
-    // </editor-fold>
+    private boolean demoEnabled;
+    private BigDecimal sliderValue = BigDecimal.ZERO;
+    private long elapsedMillis;
+    private int tickCount;
 
+    public boolean isDemoEnabled() {
+        return demoEnabled;
+    }
+
+    public void setDemoEnabled(boolean demoEnabled) {
+        this.demoEnabled = demoEnabled;
+    }
+
+    public BigDecimal getSliderValue() {
+        return sliderValue;
+    }
+
+    public void setSliderValue(BigDecimal sliderValue) {
+        this.sliderValue = sliderValue;
+    }
+
+    public long getElapsedMillis() {
+        return elapsedMillis;
+    }
+
+    public void setElapsedMillis(long elapsedMillis) {
+        this.elapsedMillis = elapsedMillis;
+    }
+
+    public int getTickCount() {
+        return tickCount;
+    }
+
+    public void setTickCount(int tickCount) {
+        this.tickCount = tickCount;
+    }
 }

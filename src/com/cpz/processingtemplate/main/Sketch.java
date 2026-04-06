@@ -1,58 +1,66 @@
 package com.cpz.processingtemplate.main;
 
-import com.cpz.processingtemplate.input.Mouse;
-import com.cpz.processingtemplate.input.Teclado;
+import com.cpz.processing.controls.controls.button.input.ButtonInputAdapter;
+import com.cpz.processing.controls.controls.button.model.ButtonModel;
+import com.cpz.processing.controls.controls.button.style.ButtonDefaultStyles;
+import com.cpz.processing.controls.controls.button.view.ButtonView;
+import com.cpz.processing.controls.controls.button.viewmodel.ButtonViewModel;
+import com.cpz.processing.controls.controls.label.model.LabelModel;
+import com.cpz.processing.controls.controls.label.style.LabelDefaultStyles;
+import com.cpz.processing.controls.controls.label.view.LabelView;
+import com.cpz.processing.controls.controls.label.viewmodel.LabelViewModel;
+import com.cpz.processing.controls.controls.slider.input.SliderInputAdapter;
+import com.cpz.processing.controls.controls.slider.model.SliderModel;
+import com.cpz.processing.controls.controls.slider.model.SliderOrientation;
+import com.cpz.processing.controls.controls.slider.style.SliderDefaultStyles;
+import com.cpz.processing.controls.controls.slider.view.SliderView;
+import com.cpz.processing.controls.controls.slider.viewmodel.SliderViewModel;
+import com.cpz.processing.controls.core.input.DefaultInputLayer;
+import com.cpz.processing.controls.core.input.InputManager;
+import com.cpz.processing.controls.core.input.KeyboardEvent;
+import com.cpz.processing.controls.core.input.PointerEvent;
+import com.cpz.processing.controls.core.theme.LightTheme;
+import com.cpz.processing.controls.core.theme.ThemeManager;
 import com.cpz.processingtemplate.model.AppState;
-import com.cpz.processingtemplate.view.SketchView;
-import com.cpz.processingtemplate.view.dto.ParametrosElipse;
-import com.cpz.processingtemplate.view.dto.ParametrosRectangulo;
 import com.cpz.processingtemplate.viewmodel.MainViewModel;
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
+import java.math.BigDecimal;
+
 import static com.cpz.processingtemplate.main.Launcher.LOG;
 
 /**
- * Componente de la capa View (paquete {@code main}) que orquesta el lifecycle de Processing.
- * <p>
- * Recibe tiempo e input desde Processing, delega decisiones al ViewModel, construye DTOs
- * de render por frame y llama al Renderer ({@link SketchView}) para draw.
- * </p>
- * <p>
- * Esta clase no implementa lógica de negocio y no muta el state del Model directamente.
- * </p>
- *
- * @author CPZ
+ * Bootstrap de Processing para la app de ejemplo basada en controls.
  */
 public class Sketch extends PApplet {
 
-    // <editor-fold defaultstate="collapsed" desc="*** variables ***">
-    private @Setter Mouse mouse;
-    private @Setter Teclado teclado;
-    private @Setter int anchoPantalla, altoPantalla, suavizado, fps;
-    private @Setter float factorHorizontalPantalla, factorVerticalPantalla;
-    private @Setter String tituloVentana;
+    private int anchoPantalla;
+    private int altoPantalla;
+    private int suavizado;
+    private int fps;
+    private float factorHorizontalPantalla;
+    private float factorVerticalPantalla;
+    private String tituloVentana;
     private final MainViewModel viewModel;
-    private final SketchView sketchView;
-    // </editor-fold>
+    private final ThemeManager themeManager;
+    private final InputManager inputManager;
+    private ButtonView buttonView;
+    private SliderView sliderView;
+    private LabelView labelView;
+    private ButtonViewModel buttonControlViewModel;
+    private SliderViewModel sliderControlViewModel;
+    private LabelViewModel labelControlViewModel;
+    private ButtonInputAdapter buttonInputAdapter;
+    private SliderInputAdapter sliderInputAdapter;
 
-    /**
-     * Crea la View principal, conectando el ViewModel y el Renderer.
-     */
     public Sketch() {
         viewModel = new MainViewModel(new AppState());
-        sketchView = new SketchView(this);
+        themeManager = new ThemeManager(new LightTheme());
+        inputManager = new InputManager();
     }
 
-    /**
-     * Fase settings de Processing.
-     * <p>
-     * Es llamada una vez por Processing antes de {@link #setup()}. Define tamaño de ventana
-     * y suavizado según la configuración proporcionada por {@link com.cpz.processingtemplate.config.Config}.
-     * </p>
-     */
     @Override
     public void settings() {
         LOG.info("Inicio settings");
@@ -61,160 +69,200 @@ public class Sketch extends PApplet {
         LOG.info("Fin settings");
     }
 
-    /**
-     * Fase setup de Processing.
-     * <p>
-     * Es llamada una vez después de {@link #settings()}. Define fps, título de la ventana
-     * y conecta los adaptadores de input.
-     * </p>
-     */
     @Override
     public void setup() {
         LOG.info("Inicio setup");
         frameRate(fps);
         surface.setTitle(tituloVentana);
-        // input
-        mouse = new Mouse(viewModel);
-        teclado = new Teclado(viewModel);
+        crearControles();
+        inputManager.registerLayer(new DemoInputLayer());
+        sincronizarControles();
         LOG.info("Fin setup");
     }
 
-    /**
-     * Inicializa el ViewModel con aquellas variables necesarias para el estado inicial
-     * del Sketch. Para esta plantilla de ejemplo sería el periodo de timer configurado.
-     * <p>
-     * Es invocado por el bootstrap después de crear el Sketch.
-     * </p>
-     *
-     * @param periodoTimer periodo del timer en milisegundos
-     */
     public void inicializarSketch(int periodoTimer) {
         viewModel.inicializar(periodoTimer);
     }
 
-    /**
-     * Loop principal de Processing ejecutado una vez por frame.
-     * <p>
-     * Actualiza el tiempo del ViewModel, aplica el state visual a Processing y construye
-     * DTOs de render para el Renderer.
-     * </p>
-     */
+    public void setAnchoPantalla(int anchoPantalla) {
+        this.anchoPantalla = anchoPantalla;
+    }
+
+    public void setAltoPantalla(int altoPantalla) {
+        this.altoPantalla = altoPantalla;
+    }
+
+    public void setSuavizado(int suavizado) {
+        this.suavizado = suavizado;
+    }
+
+    public void setFps(int fps) {
+        this.fps = fps;
+    }
+
+    public void setFactorHorizontalPantalla(float factorHorizontalPantalla) {
+        this.factorHorizontalPantalla = factorHorizontalPantalla;
+    }
+
+    public void setFactorVerticalPantalla(float factorVerticalPantalla) {
+        this.factorVerticalPantalla = factorVerticalPantalla;
+    }
+
+    public void setTituloVentana(String tituloVentana) {
+        this.tituloVentana = tituloVentana;
+    }
+
     @Override
     public void draw() {
-        update();
-        aplicarEstadoVisual();
-        dibujarUI();
+        viewModel.actualizar(millis());
+        sincronizarControles();
+        background(themeManager.getSnapshot().tokens.surface);
+        buttonView.draw();
+        sliderView.draw();
+        labelView.draw();
     }
 
-    /**
-     * Envía el tiempo actual al ViewModel para reglas basadas en tiempo.
-     */
-    private void update() {
-        viewModel.actualizarTimer(millis());
-    }
-
-    /**
-     * Aplica el state visual del ViewModel a Processing. Para esta plantilla de
-     * ejemplo serían cursor y rectMode.
-     */
-    private void aplicarEstadoVisual() {
-        if (viewModel.isCursorVisible()) cursor();
-        else noCursor();
-        rectMode(viewModel.getRectMode());
-    }
-
-    /**
-     * Construye DTOs de render para el frame actual y delega el dibujo al Renderer.
-     */
-    private void dibujarUI() {
-        background(viewModel.getColorFondo());
-        ParametrosRectangulo rect = new ParametrosRectangulo(
+    @Override
+    public void mouseWheel(@NotNull MouseEvent event) {
+        inputManager.dispatchPointer(new PointerEvent(
+                PointerEvent.Type.WHEEL,
                 mouseX,
                 mouseY,
-                anchoPantalla * 0.1f,
-                altoPantalla * 0.1f,
-                viewModel.getColorRectangulo()
+                mouseButton,
+                event.getCount(),
+                event.isShiftDown(),
+                event.isControlDown()
+        ));
+    }
+
+    @Override
+    public void mouseReleased() {
+        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.RELEASE, mouseX, mouseY, mouseButton));
+    }
+
+    @Override
+    public void mousePressed() {
+        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.PRESS, mouseX, mouseY, mouseButton));
+    }
+
+    @Override
+    public void mouseDragged() {
+        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.DRAG, mouseX, mouseY, mouseButton));
+    }
+
+    @Override
+    public void mouseMoved() {
+        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.MOVE, mouseX, mouseY, mouseButton));
+    }
+
+    @Override
+    public void keyReleased() {
+        normalizarEscape();
+        inputManager.dispatchKeyboard(crearKeyboardEvent(KeyboardEvent.Type.RELEASE));
+    }
+
+    @Override
+    public void keyPressed() {
+        normalizarEscape();
+        inputManager.dispatchKeyboard(crearKeyboardEvent(KeyboardEvent.Type.PRESS));
+    }
+
+    @Override
+    public void keyTyped() {
+        normalizarEscape();
+        inputManager.dispatchKeyboard(crearKeyboardEvent(KeyboardEvent.Type.TYPE));
+    }
+
+    private void crearControles() {
+        buttonControlViewModel = new ButtonViewModel(new ButtonModel("Disable feature"));
+        buttonControlViewModel.setClickListener(() -> {
+            viewModel.toggleDemoEnabled();
+            sincronizarControles();
+        });
+        buttonView = new ButtonView(this, buttonControlViewModel, width * 0.5f, height * 0.28f, 220.0f, 54.0f);
+        buttonView.setStyle(ButtonDefaultStyles.primary(themeManager));
+        buttonInputAdapter = new ButtonInputAdapter(buttonView, buttonControlViewModel);
+
+        SliderModel sliderModel = new SliderModel();
+        sliderModel.setMin(BigDecimal.ZERO);
+        sliderModel.setMax(new BigDecimal("100"));
+        sliderModel.setStep(BigDecimal.ONE);
+        sliderModel.setValue(viewModel.getSliderValue());
+        sliderControlViewModel = new SliderViewModel(sliderModel);
+        sliderControlViewModel.setFormatter(value -> "Value: " + value.toPlainString());
+        sliderControlViewModel.setOnValueChanged(value -> {
+            viewModel.setSliderValue(value);
+            sincronizarControles();
+        });
+        sliderView = new SliderView(this, sliderControlViewModel, width * 0.5f, height * 0.50f, 320.0f, 52.0f, SliderOrientation.HORIZONTAL);
+        sliderView.setStyle(SliderDefaultStyles.standard(themeManager));
+        sliderInputAdapter = new SliderInputAdapter(sliderView, sliderControlViewModel);
+
+        labelControlViewModel = new LabelViewModel(new LabelModel());
+        labelView = new LabelView(this, labelControlViewModel, 0.0f, 0.0f);
+        labelView.setStyle(LabelDefaultStyles.defaultText(themeManager));
+    }
+
+    private void sincronizarControles() {
+        buttonControlViewModel.setText(viewModel.isDemoEnabled() ? "Disable feature" : "Enable feature");
+        sliderControlViewModel.setEnabled(viewModel.isDemoEnabled());
+        sliderControlViewModel.setValue(viewModel.getSliderValue());
+        labelControlViewModel.setText(viewModel.getStatusText());
+        labelView.centerBlockAround(width * 0.5f, height * 0.73f);
+    }
+
+    private KeyboardEvent crearKeyboardEvent(KeyboardEvent.Type type) {
+        return new KeyboardEvent(
+                type,
+                key,
+                keyCode,
+                keyEvent != null && keyEvent.isShiftDown(),
+                keyEvent != null && keyEvent.isControlDown(),
+                keyEvent != null && keyEvent.isAltDown()
         );
-        sketchView.dibujar(rect);
-        if (viewModel.isTimerRunning()) {
-            ParametrosElipse circle = new ParametrosElipse(
-                    width - altoPantalla * 0.04f,
-                    altoPantalla * 0.04f,
-                    altoPantalla * 0.025f,
-                    viewModel.getColorCirculo()
-            );
-            sketchView.dibujar(circle);
+    }
+
+    private void normalizarEscape() {
+        if (key == ESC) {
+            key = 0;
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="*** interrupciones ***">
-    /**
-     * Reenvía el input de mouse wheel al adaptador de input.
-     *
-     * @param event evento de mouse wheel de Processing
-     */
-    @Override
-    public void mouseWheel(@NotNull MouseEvent event) {
-        mouse.mouseWheel(event.getCount());
-    }
+    private final class DemoInputLayer extends DefaultInputLayer {
+        private DemoInputLayer() {
+            super(0);
+        }
 
-    /**
-     * Reenvía el input de mouse released al adaptador de input.
-     */
-    @Override
-    public void mouseReleased() {
-        if (mouseButton == LEFT) mouse.mouseReleasedLeft();
-        else if (mouseButton == CENTER) mouse.mouseReleasedCenter();
-        else if (mouseButton == RIGHT) mouse.mouseReleasedRight();
-        else mouse.mouseReleasedOther();
-    }
+        @Override
+        public boolean handlePointerEvent(PointerEvent event) {
+            switch (event.getType()) {
+                case MOVE:
+                    buttonInputAdapter.handleMouseMove(event.getX(), event.getY());
+                    sliderInputAdapter.handleMouseMove(event.getX(), event.getY());
+                    return true;
+                case DRAG:
+                    sliderInputAdapter.handleMouseDrag(event.getX(), event.getY());
+                    buttonInputAdapter.handleMouseMove(event.getX(), event.getY());
+                    return true;
+                case PRESS:
+                    buttonInputAdapter.handleMousePress(event.getX(), event.getY());
+                    sliderInputAdapter.handleMousePress(event.getX(), event.getY());
+                    return true;
+                case RELEASE:
+                    buttonInputAdapter.handleMouseRelease(event.getX(), event.getY());
+                    sliderInputAdapter.handleMouseRelease(event.getX(), event.getY());
+                    return true;
+                case WHEEL:
+                    sliderInputAdapter.handleMouseWheel(event.getWheelDelta(), event.isShiftDown(), event.isControlDown());
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
-    /**
-     * Reenvía el input de mouse pressed al adaptador de input.
-     */
-    @Override
-    public void mousePressed() {
-        if (mouseButton == LEFT) mouse.mousePressedLeft();
-        else if (mouseButton == CENTER) mouse.mousePressedCenter();
-        else if (mouseButton == RIGHT) mouse.mousePressedRight();
-        else mouse.mousePressedOther();
+        @Override
+        public boolean handleKeyboardEvent(KeyboardEvent event) {
+            return false;
+        }
     }
-
-    /**
-     * Reenvía el input de mouse dragged al adaptador de input.
-     */
-    @Override
-    public void mouseDragged() {
-        if (mouseButton == LEFT) mouse.mouseDraggedLeft();
-        else if (mouseButton == CENTER) mouse.mouseDraggedCenter();
-        else if (mouseButton == RIGHT) mouse.mouseDraggedRight();
-        else mouse.mouseDraggedOther();
-    }
-
-    /**
-     * Reenvía el input de key release al adaptador de input.
-     */
-    @Override
-    public void keyReleased() {
-        teclado.keyReleased(key, keyCode);
-    }
-
-    /**
-     * Reenvía el input de key pressed al adaptador de input.
-     */
-    @Override
-    public void keyPressed() {
-        teclado.keyPressed(key, keyCode);
-    }
-
-    /**
-     * Callback de resize de la ventana de Processing.
-     * <p>
-     * No se define comportamiento en esta plantilla.
-     * </p>
-     */
-    @Override
-    public void windowResized() {
-    }
-    // </editor-fold>
 }

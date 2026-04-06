@@ -38,7 +38,7 @@ public class Launcher {
      *
      * @param args argumentos de línea de comandos (no usados)
      */
-    static void main(String[] args) {
+    public static void main(String[] args) {
         Locale.setDefault(Locale.forLanguageTag("en-US"));
         // shutdown hook para cerrar los handlers cuando el programa termine
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
