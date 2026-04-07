@@ -21,6 +21,10 @@ import com.cpz.processing.controls.core.input.KeyboardEvent;
 import com.cpz.processing.controls.core.input.PointerEvent;
 import com.cpz.processing.controls.core.theme.LightTheme;
 import com.cpz.processing.controls.core.theme.ThemeManager;
+import com.cpz.processingtemplate.input.keyboard.KeyboardState;
+import com.cpz.processingtemplate.input.keyboard.ProcessingKeyboardAdapter;
+import com.cpz.processingtemplate.input.pointer.PointerState;
+import com.cpz.processingtemplate.input.pointer.ProcessingPointerAdapter;
 import com.cpz.processingtemplate.model.AppState;
 import com.cpz.processingtemplate.viewmodel.MainViewModel;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +50,10 @@ public class Sketch extends PApplet {
     private final MainViewModel viewModel;
     private final ThemeManager themeManager;
     private final InputManager inputManager;
+    private final KeyboardState keyboardState;
+    private final ProcessingKeyboardAdapter keyboardAdapter;
+    private final PointerState pointerState;
+    private final ProcessingPointerAdapter pointerAdapter;
     private ButtonView buttonView;
     private SliderView sliderView;
     private LabelView labelView;
@@ -59,6 +67,10 @@ public class Sketch extends PApplet {
         viewModel = new MainViewModel(new AppState());
         themeManager = new ThemeManager(new LightTheme());
         inputManager = new InputManager();
+        keyboardState = new KeyboardState();
+        keyboardAdapter = new ProcessingKeyboardAdapter(keyboardState, inputManager);
+        pointerState = new PointerState();
+        pointerAdapter = new ProcessingPointerAdapter(pointerState, keyboardState, inputManager);
     }
 
     @Override
@@ -124,53 +136,45 @@ public class Sketch extends PApplet {
 
     @Override
     public void mouseWheel(@NotNull MouseEvent event) {
-        inputManager.dispatchPointer(new PointerEvent(
-                PointerEvent.Type.WHEEL,
-                mouseX,
-                mouseY,
-                mouseButton,
-                event.getCount(),
-                event.isShiftDown(),
-                event.isControlDown()
-        ));
+        pointerAdapter.mouseWheel(event.getCount());
     }
 
     @Override
     public void mouseReleased() {
-        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.RELEASE, mouseX, mouseY, mouseButton));
+        pointerAdapter.mouseReleased(mouseX, mouseY, mouseButton);
     }
 
     @Override
     public void mousePressed() {
-        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.PRESS, mouseX, mouseY, mouseButton));
+        pointerAdapter.mousePressed(mouseX, mouseY, mouseButton);
     }
 
     @Override
     public void mouseDragged() {
-        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.DRAG, mouseX, mouseY, mouseButton));
+        pointerAdapter.mouseDragged(mouseX, mouseY);
     }
 
     @Override
     public void mouseMoved() {
-        inputManager.dispatchPointer(new PointerEvent(PointerEvent.Type.MOVE, mouseX, mouseY, mouseButton));
+        pointerAdapter.mouseMoved(mouseX, mouseY);
     }
 
     @Override
     public void keyReleased() {
         normalizeEscape();
-        inputManager.dispatchKeyboard(createKeyboardEvent(KeyboardEvent.Type.RELEASE));
+        keyboardAdapter.keyReleased(key, keyCode);
     }
 
     @Override
     public void keyPressed() {
         normalizeEscape();
-        inputManager.dispatchKeyboard(createKeyboardEvent(KeyboardEvent.Type.PRESS));
+        keyboardAdapter.keyPressed(key, keyCode);
     }
 
     @Override
     public void keyTyped() {
         normalizeEscape();
-        inputManager.dispatchKeyboard(createKeyboardEvent(KeyboardEvent.Type.TYPE));
+        keyboardAdapter.keyTyped(key, keyCode);
     }
 
     private void createControls() {
@@ -209,17 +213,6 @@ public class Sketch extends PApplet {
         sliderControlViewModel.setValue(viewModel.getSliderValue());
         labelControlViewModel.setText(viewModel.getStatusText());
         labelView.centerBlockAround(width * 0.5f, height * 0.73f);
-    }
-
-    private KeyboardEvent createKeyboardEvent(KeyboardEvent.Type type) {
-        return new KeyboardEvent(
-                type,
-                key,
-                keyCode,
-                keyEvent != null && keyEvent.isShiftDown(),
-                keyEvent != null && keyEvent.isControlDown(),
-                keyEvent != null && keyEvent.isAltDown()
-        );
     }
 
     private void normalizeEscape() {
