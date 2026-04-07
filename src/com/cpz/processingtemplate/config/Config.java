@@ -11,11 +11,11 @@ import java.io.File;
 import static com.cpz.processingtemplate.main.Launcher.PROPS;
 
 /**
- * Configuración de bootstrap (paquete {@code config}) que prepara el {@link Sketch}
- * de Processing a partir de las propiedades de la aplicación.
+ * Bootstrap configuration ({@code config} package) that prepares the Processing {@link Sketch}
+ * from the application properties.
  * <p>
- * Esta clase conecta parámetros de ventana y ajustes de tiempo de ejecución; no contiene lógica
- * de negocio y no accede al state del ViewModel ni del Model.
+ * This class wires window parameters and runtime settings. It contains no business logic and does
+ * not access ViewModel or Model state.
  * </p>
  *
  * @author CPZ
@@ -23,42 +23,41 @@ import static com.cpz.processingtemplate.main.Launcher.PROPS;
 public class Config {
 
     /**
-     * Construye y configura la instancia principal de {@link Sketch} usando {@link Launcher#PROPS}.
+     * Builds and configures the main {@link Sketch} instance using {@link Launcher#PROPS}.
      * <p>
-     * Define el icono de la ventana, dimensiones de pantalla, factores de escala, suavizado,
-     * fps y título de la ventana.
+     * Sets the window icon, screen dimensions, scale factors, antialiasing, fps, and window title.
      * </p>
      *
-     * @return {@link Sketch} configurado y listo para inicializarse
+     * @return a configured {@link Sketch} ready to be initialized
      */
     @NotNull
-    public static Sketch configuracionVentanaSketch() {
-        // icono de la ventana
-        PJOGL.setIcon("data" + File.separator + "img" + File.separator + PROPS.getProperty("iconoVentana"));
-        // sketch principal
+    public static Sketch createWindowSketchConfiguration() {
+        // Window icon.
+        PJOGL.setIcon("data" + File.separator + "img" + File.separator + PROPS.getProperty("windowIcon"));
+        // Main sketch.
         Sketch sketch = new Sketch();
-        // dimensiones de la ventana
+        // Window dimensions.
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice pantalla = ge.getDefaultScreenDevice();
-        sketch.setAnchoPantalla(pantalla.getDisplayMode().getWidth());
-        sketch.setAltoPantalla(pantalla.getDisplayMode().getHeight());
-        // factor de proporción de la pantalla
-        sketch.setFactorHorizontalPantalla(Float.parseFloat(Launcher.PROPS.getProperty("factorHorizontalPantalla")));
-        sketch.setFactorVerticalPantalla(Float.parseFloat(Launcher.PROPS.getProperty("factorVerticalPantalla")));
-        // suavizado y cuadros por segundo
-        sketch.setSuavizado(Integer.parseInt(PROPS.getProperty("suavizado")));
+        GraphicsDevice screen = ge.getDefaultScreenDevice();
+        sketch.setScreenWidth(screen.getDisplayMode().getWidth());
+        sketch.setScreenHeight(screen.getDisplayMode().getHeight());
+        // Screen scale factors.
+        sketch.setHorizontalScreenScaleFactor(Float.parseFloat(Launcher.PROPS.getProperty("horizontalScreenScaleFactor")));
+        sketch.setVerticalScreenScaleFactor(Float.parseFloat(Launcher.PROPS.getProperty("verticalScreenScaleFactor")));
+        // Antialiasing and frames per second.
+        sketch.setSmoothing(Integer.parseInt(PROPS.getProperty("smoothing")));
         sketch.setFps(Integer.parseInt(PROPS.getProperty("fps")));
-        // título de la ventana
-        sketch.setTituloVentana(PROPS.getProperty("tituloVentana"));
+        // Window title.
+        sketch.setWindowTitle(PROPS.getProperty("windowTitle"));
         return sketch;
     }
 
     /**
-     * Inicializa el sketch indicado con los ajustes de timer desde properties.
+     * Initializes the given sketch with timer settings from the properties file.
      *
-     * @param sketch instancia de sketch a inicializar
+     * @param sketch sketch instance to initialize
      */
-    public static void inicializarSketch(@NotNull Sketch sketch) {
-        sketch.inicializarSketch(Integer.parseInt(Launcher.PROPS.getProperty("periodoTimer")));
+    public static void initializeSketch(@NotNull Sketch sketch) {
+        sketch.initializeSketch(Integer.parseInt(Launcher.PROPS.getProperty("timerInterval")));
     }
 }

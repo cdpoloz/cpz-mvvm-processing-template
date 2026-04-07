@@ -6,10 +6,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Componente de infraestructura de logging (paquete {@code logging}) que configura los handlers
- * definidos en {@link ConfigLog} y expone un {@link Logger} preconfigurado.
+ * Logging infrastructure component ({@code logging} package) that configures the handlers defined
+ * in {@link ConfigLog} and exposes a preconfigured {@link Logger}.
  * <p>
- * Esta clase no participa en la lógica MVVM; centraliza únicamente la configuración de logging.
+ * This class does not participate in MVVM logic. It only centralizes logging configuration.
  * </p>
  *
  * @author CPZ
@@ -17,14 +17,14 @@ import java.util.logging.Logger;
 public class Log extends Logger {
 
     /**
-     * Crea un logger con los handlers de consola y archivo configurados.
+     * Creates a logger with the configured console and file handlers.
      *
-     * @param name nombre del logger
+     * @param name logger name
      */
     public Log(String name) {
         super(name, null);
-        addHandler(ConfigLog.obtenerLogConsoleHandler());
-        addHandler(ConfigLog.obtenerLogFileHandler());
+        addHandler(ConfigLog.getLogConsoleHandler());
+        addHandler(ConfigLog.getLogFileHandler());
         setLevel(Level.ALL);
     }
 

@@ -32,17 +32,17 @@ import java.math.BigDecimal;
 import static com.cpz.processingtemplate.main.Launcher.LOG;
 
 /**
- * Bootstrap de Processing para la app de ejemplo basada en controls.
+ * Processing bootstrap for the example application built on top of controls.
  */
 public class Sketch extends PApplet {
 
-    private int anchoPantalla;
-    private int altoPantalla;
-    private int suavizado;
+    private int screenWidth;
+    private int screenHeight;
+    private int smoothing;
     private int fps;
-    private float factorHorizontalPantalla;
-    private float factorVerticalPantalla;
-    private String tituloVentana;
+    private float horizontalScreenScaleFactor;
+    private float verticalScreenScaleFactor;
+    private String windowTitle;
     private final MainViewModel viewModel;
     private final ThemeManager themeManager;
     private final InputManager inputManager;
@@ -63,59 +63,59 @@ public class Sketch extends PApplet {
 
     @Override
     public void settings() {
-        LOG.info("Inicio settings");
-        size((int) (anchoPantalla * factorHorizontalPantalla), (int) (altoPantalla * factorVerticalPantalla), P2D);
-        smooth(suavizado);
-        LOG.info("Fin settings");
+        LOG.info("Starting settings");
+        size((int) (screenWidth * horizontalScreenScaleFactor), (int) (screenHeight * verticalScreenScaleFactor), P2D);
+        smooth(smoothing);
+        LOG.info("Finished settings");
     }
 
     @Override
     public void setup() {
-        LOG.info("Inicio setup");
+        LOG.info("Starting setup");
         frameRate(fps);
-        surface.setTitle(tituloVentana);
-        crearControles();
+        surface.setTitle(windowTitle);
+        createControls();
         inputManager.registerLayer(new DemoInputLayer());
-        sincronizarControles();
-        LOG.info("Fin setup");
+        syncControls();
+        LOG.info("Finished setup");
     }
 
-    public void inicializarSketch(int periodoTimer) {
-        viewModel.inicializar(periodoTimer);
+    public void initializeSketch(int timerInterval) {
+        viewModel.initialize(timerInterval);
     }
 
-    public void setAnchoPantalla(int anchoPantalla) {
-        this.anchoPantalla = anchoPantalla;
+    public void setScreenWidth(int screenWidth) {
+        this.screenWidth = screenWidth;
     }
 
-    public void setAltoPantalla(int altoPantalla) {
-        this.altoPantalla = altoPantalla;
+    public void setScreenHeight(int screenHeight) {
+        this.screenHeight = screenHeight;
     }
 
-    public void setSuavizado(int suavizado) {
-        this.suavizado = suavizado;
+    public void setSmoothing(int smoothing) {
+        this.smoothing = smoothing;
     }
 
     public void setFps(int fps) {
         this.fps = fps;
     }
 
-    public void setFactorHorizontalPantalla(float factorHorizontalPantalla) {
-        this.factorHorizontalPantalla = factorHorizontalPantalla;
+    public void setHorizontalScreenScaleFactor(float horizontalScreenScaleFactor) {
+        this.horizontalScreenScaleFactor = horizontalScreenScaleFactor;
     }
 
-    public void setFactorVerticalPantalla(float factorVerticalPantalla) {
-        this.factorVerticalPantalla = factorVerticalPantalla;
+    public void setVerticalScreenScaleFactor(float verticalScreenScaleFactor) {
+        this.verticalScreenScaleFactor = verticalScreenScaleFactor;
     }
 
-    public void setTituloVentana(String tituloVentana) {
-        this.tituloVentana = tituloVentana;
+    public void setWindowTitle(String windowTitle) {
+        this.windowTitle = windowTitle;
     }
 
     @Override
     public void draw() {
-        viewModel.actualizar(millis());
-        sincronizarControles();
+        viewModel.update(millis());
+        syncControls();
         background(themeManager.getSnapshot().tokens.surface);
         buttonView.draw();
         sliderView.draw();
@@ -157,27 +157,27 @@ public class Sketch extends PApplet {
 
     @Override
     public void keyReleased() {
-        normalizarEscape();
-        inputManager.dispatchKeyboard(crearKeyboardEvent(KeyboardEvent.Type.RELEASE));
+        normalizeEscape();
+        inputManager.dispatchKeyboard(createKeyboardEvent(KeyboardEvent.Type.RELEASE));
     }
 
     @Override
     public void keyPressed() {
-        normalizarEscape();
-        inputManager.dispatchKeyboard(crearKeyboardEvent(KeyboardEvent.Type.PRESS));
+        normalizeEscape();
+        inputManager.dispatchKeyboard(createKeyboardEvent(KeyboardEvent.Type.PRESS));
     }
 
     @Override
     public void keyTyped() {
-        normalizarEscape();
-        inputManager.dispatchKeyboard(crearKeyboardEvent(KeyboardEvent.Type.TYPE));
+        normalizeEscape();
+        inputManager.dispatchKeyboard(createKeyboardEvent(KeyboardEvent.Type.TYPE));
     }
 
-    private void crearControles() {
+    private void createControls() {
         buttonControlViewModel = new ButtonViewModel(new ButtonModel("Disable feature"));
         buttonControlViewModel.setClickListener(() -> {
             viewModel.toggleDemoEnabled();
-            sincronizarControles();
+            syncControls();
         });
         buttonView = new ButtonView(this, buttonControlViewModel, width * 0.5f, height * 0.28f, 220.0f, 54.0f);
         buttonView.setStyle(ButtonDefaultStyles.primary(themeManager));
@@ -192,7 +192,7 @@ public class Sketch extends PApplet {
         sliderControlViewModel.setFormatter(value -> "Value: " + value.toPlainString());
         sliderControlViewModel.setOnValueChanged(value -> {
             viewModel.setSliderValue(value);
-            sincronizarControles();
+            syncControls();
         });
         sliderView = new SliderView(this, sliderControlViewModel, width * 0.5f, height * 0.50f, 320.0f, 52.0f, SliderOrientation.HORIZONTAL);
         sliderView.setStyle(SliderDefaultStyles.standard(themeManager));
@@ -203,7 +203,7 @@ public class Sketch extends PApplet {
         labelView.setStyle(LabelDefaultStyles.defaultText(themeManager));
     }
 
-    private void sincronizarControles() {
+    private void syncControls() {
         buttonControlViewModel.setText(viewModel.isDemoEnabled() ? "Disable feature" : "Enable feature");
         sliderControlViewModel.setEnabled(viewModel.isDemoEnabled());
         sliderControlViewModel.setValue(viewModel.getSliderValue());
@@ -211,7 +211,7 @@ public class Sketch extends PApplet {
         labelView.centerBlockAround(width * 0.5f, height * 0.73f);
     }
 
-    private KeyboardEvent crearKeyboardEvent(KeyboardEvent.Type type) {
+    private KeyboardEvent createKeyboardEvent(KeyboardEvent.Type type) {
         return new KeyboardEvent(
                 type,
                 key,
@@ -222,7 +222,7 @@ public class Sketch extends PApplet {
         );
     }
 
-    private void normalizarEscape() {
+    private void normalizeEscape() {
         if (key == ESC) {
             key = 0;
         }

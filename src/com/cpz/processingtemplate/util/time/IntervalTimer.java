@@ -1,23 +1,23 @@
 package com.cpz.processingtemplate.util.time;
 
 /**
- * Timer de intervalos impulsado por tiempo externo.
+ * Interval timer driven by external time values.
  */
 public class IntervalTimer {
 
-    private final int periodo;
+    private final int interval;
     private boolean running;
-    private long ultimoTiempoDeInicio;
+    private long lastStartTime;
 
-    public IntervalTimer(int periodo) {
-        this.periodo = periodo;
+    public IntervalTimer(int interval) {
+        this.interval = interval;
         this.running = false;
-        this.ultimoTiempoDeInicio = 0L;
+        this.lastStartTime = 0L;
     }
 
-    public void start(long tiempoActual) {
+    public void start(long currentTime) {
         this.running = true;
-        this.ultimoTiempoDeInicio = tiempoActual;
+        this.lastStartTime = currentTime;
     }
 
     public void stop() {
@@ -28,15 +28,15 @@ public class IntervalTimer {
         return running;
     }
 
-    public boolean isFinPeriodo(long tiempoActual) {
+    public boolean isIntervalComplete(long currentTime) {
         if (!running) {
             return false;
         }
-        if (periodo <= 0) {
+        if (interval <= 0) {
             return false;
         }
-        if (tiempoActual - ultimoTiempoDeInicio >= periodo) {
-            ultimoTiempoDeInicio = tiempoActual;
+        if (currentTime - lastStartTime >= interval) {
+            lastStartTime = currentTime;
             return true;
         }
         return false;

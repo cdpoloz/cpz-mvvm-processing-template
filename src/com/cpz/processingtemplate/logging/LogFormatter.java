@@ -8,15 +8,15 @@ import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
 /**
- * Formateador de infraestructura de logging (paquete {@code logging}) usado por los handlers configurados.
+ * Logging infrastructure formatter ({@code logging} package) used by the configured handlers.
  * <p>
- * Extiende {@link SimpleFormatter} para proporcionar un formato de línea determinista y legible
- * que incluye timestamp, nivel de log y origen (clase y método).
+ * Extends {@link SimpleFormatter} to provide a deterministic, readable line format that includes
+ * the timestamp, log level, and origin (class and method).
  * </p>
  *
- * <p>Formato de línea:</p>
+ * <p>Line format:</p>
  * <pre>
- * yyyy-MM-dd HH:mm:ss.SSS LEVEL Class.Method > Mensaje
+ * yyyy-MM-dd HH:mm:ss.SSS LEVEL Class.Method > Message
  * </pre>
  *
  * @author CPZ
@@ -24,10 +24,10 @@ import java.util.logging.SimpleFormatter;
 public class LogFormatter extends SimpleFormatter {
 
     /**
-     * Formatea un {@link LogRecord} según el patrón de línea configurado.
+     * Formats a {@link LogRecord} according to the configured line pattern.
      *
-     * @param record registro de log a formatear
-     * @return línea formateada para la salida de log
+     * @param record log record to format
+     * @return formatted line for log output
      */
     @Override
     public String format(@NotNull LogRecord record) {

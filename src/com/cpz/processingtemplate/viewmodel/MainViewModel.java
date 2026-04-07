@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Logica de la app de ejemplo consumidora de controls.
+ * Logic for the example application that consumes controls.
  */
 public class MainViewModel {
 
@@ -18,18 +18,18 @@ public class MainViewModel {
         this.appState = appState;
     }
 
-    public void inicializar(int periodoTimer) {
+    public void initialize(int timerInterval) {
         appState.setDemoEnabled(true);
         appState.setSliderValue(new BigDecimal("50"));
         appState.setElapsedMillis(0L);
         appState.setTickCount(0);
-        timer = new IntervalTimer(periodoTimer);
+        timer = new IntervalTimer(timerInterval);
         timer.start(0L);
     }
 
-    public void actualizar(long nowMillis) {
+    public void update(long nowMillis) {
         appState.setElapsedMillis(Math.max(0L, nowMillis));
-        if (timer != null && timer.isFinPeriodo(nowMillis)) {
+        if (timer != null && timer.isIntervalComplete(nowMillis)) {
             appState.setTickCount(appState.getTickCount() + 1);
         }
     }

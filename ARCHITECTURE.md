@@ -1,31 +1,31 @@
-# Arquitectura
+# Architecture
 
-La unica fuente de verdad arquitectonica para esta plantilla es `cpz-mvvm-processing-controls`.
+The only architectural source of truth for this template is `cpz-mvvm-processing-controls`.
 
-## Regla principal
+## Main Rule
 
-La plantilla debe actuar como consumidor limpio de la libreria:
+The template must act as a clean consumer of the library:
 
-- `model`: estado de aplicacion.
-- `viewmodel`: logica de aplicacion.
-- `main`: bootstrap de Processing y cableado minimo.
+- `model`: application state.
+- `viewmodel`: application logic.
+- `main`: Processing bootstrap and minimal wiring.
 
-## No permitido
+## Not Allowed
 
-- Reintroducir un framework MVVM propio.
-- Reimplementar `InputManager`, `InputLayer` o adaptadores de teclado y puntero.
-- Recrear pipelines de render o DTOs genericos de dibujo.
-- Implementar un sistema de temas paralelo.
+- Reintroducing a custom MVVM framework.
+- Reimplementing `InputManager`, `InputLayer`, or keyboard and pointer adapters.
+- Recreating render pipelines or generic drawing DTOs.
+- Implementing a parallel theme system.
 
-## Permitido
+## Allowed
 
-- Crear estado y logica especificos de la app.
-- Instanciar controles de la libreria y conectarlos al `MainViewModel`.
-- Usar `ThemeManager` e `InputManager` de la libreria en `Sketch`.
+- Creating app-specific state and logic.
+- Instantiating library controls and connecting them to `MainViewModel`.
+- Using the library `ThemeManager` and `InputManager` in `Sketch`.
 
 ## Checklist
 
-- `Sketch` solo hace bootstrap, forwarding de eventos y `draw()`.
-- `MainViewModel` sigue siendo Java puro.
-- Los controles usan estilos y temas de la libreria.
-- No aparecen sistemas legacy de input o render en la plantilla.
+- `Sketch` only handles bootstrap, event forwarding, and `draw()`.
+- `MainViewModel` remains pure Java.
+- Controls use styles and themes from the library.
+- No legacy input or render systems appear in the template.

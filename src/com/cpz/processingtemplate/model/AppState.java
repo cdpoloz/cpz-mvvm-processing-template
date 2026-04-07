@@ -3,7 +3,7 @@ package com.cpz.processingtemplate.model;
 import java.math.BigDecimal;
 
 /**
- * Estado puro de la aplicacion de ejemplo.
+ * Pure state for the example application.
  */
 public class AppState {
 

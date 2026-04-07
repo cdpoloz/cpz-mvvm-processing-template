@@ -15,10 +15,10 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 /**
- * Configuración de bootstrap (paquete {@code config}) para la infraestructura de logging.
+ * Bootstrap configuration ({@code config} package) for the logging infrastructure.
  * <p>
- * Proporciona handlers preconfigurados para salida a archivo y consola. Esta clase no
- * contiene lógica de negocio y es usada por {@link com.cpz.processingtemplate.logging.Log}.
+ * Provides preconfigured handlers for file and console output. This class contains no business
+ * logic and is used by {@link com.cpz.processingtemplate.logging.Log}.
  * </p>
  *
  * @author CPZ
@@ -26,33 +26,33 @@ import java.util.logging.Level;
 public class ConfigLog {
 
     /**
-     * Crea un {@link FileHandler} que escribe en la carpeta {@code log} usando
-     * la fecha actual en el nombre del archivo.
+     * Creates a {@link FileHandler} that writes to the {@code log} folder using the current date
+     * in the file name.
      * <p>
-     * Usa {@link LogFormatter} y establece el nivel del handler en {@link Level#INFO}.
+     * Uses {@link LogFormatter} and sets the handler level to {@link Level#INFO}.
      * </p>
      *
-     * @return {@link FileHandler} configurado, o {@code null} si ocurre un error de IO
+     * @return a configured {@link FileHandler}, or {@code null} if an I/O error occurs
      */
     @Nullable
-    public static FileHandler obtenerLogFileHandler() {
+    public static FileHandler getLogFileHandler() {
         try {
-            Path carpeta = Paths.get("log");
-            if (Files.notExists(carpeta)) {
-                Files.createDirectories(carpeta);
+            Path folder = Paths.get("log");
+            if (Files.notExists(folder)) {
+                Files.createDirectories(folder);
             }
-            LocalDate fechaHoy = LocalDate.now();
-            String s
+            LocalDate currentDate = LocalDate.now();
+            String fileName
                     = "ProcessingTemplate_"
-                    + fechaHoy.getYear()
+                    + currentDate.getYear()
                     + "-"
-                    + String.format("%02d", fechaHoy.getMonthValue())
+                    + String.format("%02d", currentDate.getMonthValue())
                     + "-"
-                    + String.format("%02d", fechaHoy.getDayOfMonth())
+                    + String.format("%02d", currentDate.getDayOfMonth())
                     + ".log";
-            FileHandler fileHandler = new FileHandler(carpeta + File.separator + s, true);
+            FileHandler fileHandler = new FileHandler(folder + File.separator + fileName, true);
             fileHandler.setFormatter(new LogFormatter());
-            fileHandler.setLevel(Level.INFO); //INFO
+            fileHandler.setLevel(Level.INFO);
             return fileHandler;
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -61,18 +61,18 @@ public class ConfigLog {
     }
 
     /**
-     * Crea un {@link ConsoleHandler} para logging en stdout.
+     * Creates a {@link ConsoleHandler} for stdout logging.
      * <p>
-     * Usa {@link LogFormatter} y establece el nivel del handler en {@link Level#CONFIG}.
+     * Uses {@link LogFormatter} and sets the handler level to {@link Level#CONFIG}.
      * </p>
      *
-     * @return {@link ConsoleHandler} configurado
+     * @return a configured {@link ConsoleHandler}
      */
     @NotNull
-    public static ConsoleHandler obtenerLogConsoleHandler() {
+    public static ConsoleHandler getLogConsoleHandler() {
         ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setFormatter(new LogFormatter());
-        consoleHandler.setLevel(Level.CONFIG); //CONFIG
+        consoleHandler.setLevel(Level.CONFIG);
         return consoleHandler;
     }
 }
