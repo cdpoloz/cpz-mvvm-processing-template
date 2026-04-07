@@ -1,0 +1,97 @@
+@startuml
+skinparam packageStyle rectangle
+
+package "com.cpz.processingtemplate.main" {
+  class Launcher
+  class Sketch
+}
+
+package "com.cpz.processingtemplate.config" {
+  class Config
+  class ConfigLog
+}
+
+package "com.cpz.processingtemplate.model" {
+  class AppState
+}
+
+package "com.cpz.processingtemplate.viewmodel" {
+  class MainViewModel
+}
+
+package "com.cpz.processingtemplate.input.keyboard" {
+  class KeyboardState
+  class ProcessingKeyboardAdapter
+}
+
+package "com.cpz.processingtemplate.input.pointer" {
+  class PointerState
+  class ProcessingPointerAdapter
+}
+
+package "com.cpz.processingtemplate.logging" {
+  class Log
+  class LogFormatter
+  class LogMessage
+}
+
+package "com.cpz.processingtemplate.util.time" {
+  class IntervalTimer
+}
+
+package "cpz-mvvm-processing-controls" {
+  class InputManager
+  class KeyboardEvent
+  class PointerEvent
+  class ThemeManager
+  class ButtonView
+  class SliderView
+  class LabelView
+}
+
+class "processing.core.PApplet" as PApplet
+class "java.util.logging.Logger" as Logger
+class "java.util.logging.SimpleFormatter" as SimpleFormatter
+
+Sketch --|> PApplet
+Log --|> Logger
+LogFormatter --|> SimpleFormatter
+
+Sketch *-- MainViewModel
+Sketch *-- ThemeManager
+Sketch *-- InputManager
+Sketch *-- KeyboardState
+Sketch *-- ProcessingKeyboardAdapter
+Sketch *-- PointerState
+Sketch *-- ProcessingPointerAdapter
+Sketch *-- ButtonView
+Sketch *-- SliderView
+Sketch *-- LabelView
+
+MainViewModel *-- AppState
+MainViewModel *-- IntervalTimer
+
+ProcessingKeyboardAdapter *-- KeyboardState
+ProcessingKeyboardAdapter ..> InputManager
+ProcessingKeyboardAdapter ..> KeyboardEvent
+
+ProcessingPointerAdapter *-- PointerState
+ProcessingPointerAdapter ..> KeyboardState
+ProcessingPointerAdapter ..> InputManager
+ProcessingPointerAdapter ..> PointerEvent
+
+Launcher ..> Config
+Launcher ..> Sketch
+Launcher ..> Log
+Launcher ..> LogMessage
+
+Config ..> Launcher
+Config ..> Sketch
+ConfigLog ..> LogFormatter
+
+PApplet ..> ProcessingKeyboardAdapter : key callbacks
+PApplet ..> ProcessingPointerAdapter : mouse callbacks
+InputManager ..> ButtonView
+InputManager ..> SliderView
+InputManager ..> LabelView
+@enduml

@@ -1,127 +1,101 @@
 # CPZ MVVM Processing Template
 ![Java](https://img.shields.io/badge/Java-25+-orange)
-![Processing](https://img.shields.io/badge/Processing-4.x-blue)
+![Processing](https://img.shields.io/badge/Processing-4.5.x-blue)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-Minimal starter template for building Processing desktop applications using a strict MVVM architecture powered by cpz-mvvm-processing-controls.
+This is a starter template that consumes `cpz-mvvm-processing-controls`.
+It provides a clean starting point for Processing desktop applications that want to keep Processing bootstrap code thin and move UI behavior into the controls library.
 
-------------------------------------------------------------------------
+## Architecture Overview
 
-## Why this template?
+The template follows a strict consumer model:
 
-Processing sketches typically grow around a single `PApplet` class where rendering, input handling, and state are mixed together.
+- `model`: application state.
+- `viewmodel`: pure Java application logic.
+- `main`: Processing bootstrap, dependency wiring, callback forwarding, and control drawing.
 
-This template provides a clean starting point that:
+`Sketch` is intentionally small. It sets up Processing, creates the controls wiring, forwards keyboard and pointer callbacks to adapters, syncs state from `MainViewModel`, and draws controls.
 
-- separates application logic from rendering
-- delegates UI behavior to a dedicated controls library
-- uses explicit input routing instead of direct event handling
-- keeps the Processing sketch focused only on bootstrapping and orchestration
+The controls library owns the reusable UI framework pieces:
 
-It is designed to be cloned and used as the foundation for new applications.
+- `InputManager`
+- `KeyboardEvent` / `PointerEvent`
+- control views and adapters
+- theming and rendering infrastructure
 
-------------------------------------------------------------------------
+This template does not reimplement those systems.
 
-## Relationship with cpz-mvvm-processing-controls
+## Input Flow (Simplified)
 
-This template is a **consumer** of:
+```text
+Processing (or any source)
+        ↓
+Adapters (Keyboard / Pointer)
+        ↓
+State (KeyboardState / PointerState)
+        ↓
+InputManager
+        ↓
+Controls (via InputLayer & Adapters)
+        ↓
+ViewModel
+```
 
-→ `cpz-mvvm-processing-controls`
+In practice:
 
-The controls library provides:
+- Processing keyboard callbacks go to `ProcessingKeyboardAdapter`.
+- Processing pointer callbacks go to `ProcessingPointerAdapter`.
+- Adapters update `KeyboardState` / `PointerState`.
+- Adapters dispatch `KeyboardEvent` / `PointerEvent` through `InputManager`.
+- Controls react through the controls library input pipeline.
+- `MainViewModel` stays independent from Processing APIs.
 
-- MVVM architecture primitives
-- Input system (`InputManager`, `InputLayer`, `FocusManager`)
-- Rendering pipeline (`ViewState → Style → RenderStyle → Renderer`)
-- Theming system (`ThemeManager`, `ThemeSnapshot`)
+## What Is Included
 
-This template **does not reimplement any of these systems**.
+- Minimal `Sketch` and `Launcher`
+- Application-specific `AppState` and `MainViewModel`
+- `InputManager` and `ThemeManager` wiring
+- Keyboard and pointer adapter/state classes
+- Example controls: button, slider, and label
 
-Instead, it demonstrates how to wire them together in a minimal application.
+## Usage Guidelines
 
-------------------------------------------------------------------------
+DO:
 
-## What is included
+- Forward Processing callbacks to the input adapters.
+- Keep `MainViewModel` free of Processing dependencies.
+- Use controls from `cpz-mvvm-processing-controls` as the UI layer.
+- Keep `Sketch` focused on bootstrap, forwarding, and drawing.
 
-- Minimal `Sketch` acting as Processing entry point
-- Application-specific `Model` and `ViewModel`
-- Basic wiring of:
-    - `InputManager`
-    - `ThemeManager`
-- Example controls:
-    - Button
-    - Slider
-    - Label
-- Simple interaction:
-    - Button toggles state
-    - Slider updates a numeric value
-    - Label reflects current state
+DO NOT:
 
-------------------------------------------------------------------------
+- Handle input logic directly in `Sketch`.
+- Access `mouseX`, `mouseY`, `key`, or `keyCode` outside adapters.
+- Reintroduce custom input systems or direct Processing-to-control shortcuts.
+- Rebuild framework pieces that already belong to the controls project.
 
 ## Quick Start
 
-1. Clone this repository
-2. Ensure Processing 4.x is available in your project
-3. Add `cpz-mvvm-processing-controls` to your classpath
-4. Run `Launcher`
+1. Clone this repository.
+2. Make sure Processing 4.x is available in the project.
+3. Add `cpz-mvvm-processing-controls` to the classpath.
+4. Run `Launcher`.
 
-The application will display a minimal UI composed of controls from the library.
+## Related Project
 
-------------------------------------------------------------------------
+`cpz-mvvm-processing-controls`
 
-## Application Flow
+- controls = reusable framework and UI infrastructure
+- template = starter consumer that shows how to wire the framework into an app
 
-Typical execution flow:
+Use the controls project as the reference for shared architecture and reusable behavior.
 
-- Processing calls `draw()`
-- The `Sketch` updates the `ViewModel`
-- Controls receive input through `InputManager`
-- Views build `ViewState`
-- Styles resolve visual properties using `ThemeSnapshot`
-- Renderers draw to the screen
+## More Documentation
 
-The `Sketch` itself does not contain rendering logic or business logic.
-
-------------------------------------------------------------------------
-
-## Project Structure
-
-- `main` → Processing entry point (`Sketch`, `Launcher`)
-- `model` → application state (pure data)
-- `viewmodel` → interaction logic and state transitions
-- `config` → application configuration
-- `util` → generic utilities (time, logging, etc.)
-- `data` → configuration files and assets
-
-------------------------------------------------------------------------
-
-## Design Principles
-
-- No duplicated architecture (all core systems come from controls)
-- Explicit data flow
-- Separation of concerns
-- Minimal bootstrap code
-- Ready to extend
-
-------------------------------------------------------------------------
-
-## Intended Usage
-
-This template is meant to:
-
-- serve as a starting point for new Processing desktop applications
-- demonstrate correct usage of the controls library
-- avoid reimplementing MVVM, input, or rendering infrastructure
-
-------------------------------------------------------------------------
-
-## Status
-
-This template is actively maintained alongside the controls library and reflects the current architecture.
-
-------------------------------------------------------------------------
+- [Architecture](/C:/Users/carlos.polo/Software/CPZ/cpz-mvvm-processing-template/docs/architecture.md)
+- [UML Architecture](/C:/Users/carlos.polo/Software/CPZ/cpz-mvvm-processing-template/docs/uml/uml-architecture.puml)
+- [UML Detail](/C:/Users/carlos.polo/Software/CPZ/cpz-mvvm-processing-template/docs/uml/uml-detail.puml)
 
 ## License
 
