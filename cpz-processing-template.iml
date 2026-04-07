@@ -6,7 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="module" module-name="cpz-mvvm-processing-controls" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Processing 4.5.2" level="project" />
+    <orderEntry type="library" name="Processing 4.5.2" level="project" />
   </component>
 </module>
