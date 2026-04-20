@@ -58,6 +58,21 @@ Click the button to verify everything is working.
 
 ---
 
+## Dependencies
+
+This template includes local copies of the required libraries under `lib/`:
+
+- Processing 4.5.x
+- cpz-mvvm-processing-controls
+
+After cloning the repository, make sure your IDE adds those JARs to the project
+classpath before running `Launcher`.
+
+If your IDE does not detect them automatically, add the JAR files from `lib/`
+manually in the project/module dependencies.
+
+---
+
 ## Mental Model
 
 At a glance, the template behaves like this:
