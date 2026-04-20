@@ -1,223 +1,105 @@
 @startuml
 skinparam classAttributeIconSize 0
 
-package "com.cpz.processingtemplate.main" {
-  class Sketch <<View>> {
-    - screenWidth: int
-    - screenHeight: int
-    - smoothing: int
-    - fps: int
-    - horizontalScreenScaleFactor: float
-    - verticalScreenScaleFactor: float
-    - windowTitle: String
-    - viewModel: MainViewModel
-    - themeManager: ThemeManager
+package "com.cpz.processing.template.main" {
+  class Launcher {
+    + main(args: String[]): void
+  }
+
+  class Sketch {
     - inputManager: InputManager
-    - keyboardState: KeyboardState
-    - keyboardAdapter: ProcessingKeyboardAdapter
-    - pointerState: PointerState
-    - pointerAdapter: ProcessingPointerAdapter
-    - buttonView: ButtonView
-    - sliderView: SliderView
-    - labelView: LabelView
+    - button: Button
+    - label: Label
+    - clickCount: int
     --
     + settings(): void
     + setup(): void
     + draw(): void
-    + initializeSketch(timerInterval: int): void
-    + mouseWheel(event: MouseEvent): void
-    + mouseReleased(): void
-    + mousePressed(): void
-    + mouseDragged(): void
     + mouseMoved(): void
-    + keyReleased(): void
-    + keyPressed(): void
-    + keyTyped(): void
+    + mouseDragged(): void
+    + mousePressed(): void
+    + mouseReleased(): void
     --
-    - createControls(): void
-    - syncControls(): void
-    - normalizeEscape(): void
-  }
-
-  class Launcher <<Infrastructure>>
-}
-
-package "com.cpz.processingtemplate.viewmodel" {
-  class MainViewModel <<ViewModel>> {
-    - appState: AppState
-    - timer: IntervalTimer
-    --
-    + initialize(timerInterval: int): void
-    + update(nowMillis: long): void
-    + toggleDemoEnabled(): void
-    + setSliderValue(sliderValue: BigDecimal): void
-    + isDemoEnabled(): boolean
-    + getSliderValue(): BigDecimal
-    + getStatusText(): String
+    - btnTestClicked(): void
   }
 }
 
-package "com.cpz.processingtemplate.model" {
-  class AppState <<Model>> {
-    - demoEnabled: boolean
-    - sliderValue: BigDecimal
-    - elapsedMillis: long
-    - tickCount: int
+package "com.cpz.processing.template.config" {
+  class Config {
+    + settings(sk: Sketch): void
+    + setup(sk: Sketch): void
   }
 }
 
-package "com.cpz.processingtemplate.input.keyboard" {
-  class KeyboardState <<Infrastructure>> {
-    - pressedKeys: Set<Integer>
-    - shiftPressed: boolean
-    - ctrlPressed: boolean
-    - altPressed: boolean
+package "com.cpz.processing.template.input" {
+  class MainInputLayer {
+    - pointerTargets: List<PointerTarget>
+    - keyboardTargets: List<KeyboardTarget>
     --
-    + setKeyPressed(keyCode: int, key: char): void
-    + setKeyReleased(keyCode: int, key: char): void
-    + isShiftPressed(): boolean
-    + isCtrlPressed(): boolean
-    + isAltPressed(): boolean
+    + MainInputLayer(priority: int)
+    + addPointerTarget(target: PointerTarget): MainInputLayer
+    + addKeyboardTarget(target: KeyboardTarget): MainInputLayer
+    + handlePointerEvent(event: PointerEvent): boolean
+    + handleKeyboardEvent(event: KeyboardEvent): boolean
   }
 
-  class ProcessingKeyboardAdapter <<Infrastructure>> {
-    - keyboardState: KeyboardState
-    - inputManager: InputManager
-    --
-    + keyPressed(key: char, keyCode: int): void
-    + keyReleased(key: char, keyCode: int): void
-    + keyTyped(key: char, keyCode: int): void
-  }
-}
-
-package "com.cpz.processingtemplate.input.pointer" {
-  class PointerState <<Infrastructure>> {
-    - x: float
-    - y: float
-    - pressed: boolean
-    - button: int
-    - wheelDelta: float
-    --
-    + setPosition(x: float, y: float): void
-    + setPressed(pressed: boolean, button: int): void
-    + setWheel(delta: float): void
-    + getX(): float
-    + getY(): float
-    + isPressed(): boolean
-    + getButton(): int
-    + getWheelDelta(): float
+  interface PointerTarget {
+    + handlePointerEvent(event: PointerEvent): void
   }
 
-  class ProcessingPointerAdapter <<Infrastructure>> {
-    - pointerState: PointerState
-    - keyboardState: KeyboardState
-    - inputManager: InputManager
-    --
-    + mouseMoved(x: float, y: float): void
-    + mouseDragged(x: float, y: float): void
-    + mousePressed(x: float, y: float, button: int): void
-    + mouseReleased(x: float, y: float, button: int): void
-    + mouseWheel(delta: float): void
+  interface KeyboardTarget {
+    + handleKeyboardEvent(event: KeyboardEvent): void
   }
-}
-
-package "com.cpz.processingtemplate.util.time" {
-  class IntervalTimer <<Infrastructure>> {
-    - interval: int
-    - running: boolean
-    - lastStartTime: long
-    --
-    + start(currentTime: long): void
-    + stop(): void
-    + isRunning(): boolean
-    + isIntervalComplete(currentTime: long): boolean
-  }
-}
-
-package "com.cpz.processingtemplate.config" {
-  class Config <<Infrastructure>>
-  class ConfigLog <<Infrastructure>>
-}
-
-package "com.cpz.processingtemplate.logging" {
-  class Log <<Infrastructure>>
-  class LogFormatter <<Infrastructure>>
-  class LogMessage <<Infrastructure>>
 }
 
 package "cpz-mvvm-processing-controls" {
-  class InputManager <<Infrastructure>>
-  class KeyboardEvent <<Infrastructure>>
-  class PointerEvent <<Infrastructure>>
-  class ThemeManager <<Infrastructure>>
-  class ButtonView <<View>>
-  class SliderView <<View>>
-  class LabelView <<View>>
+  interface Control
+  class Button {
+    + handlePointerEvent(event: PointerEvent): void
+    + setClickListener(listener): void
+  }
+  class Label {
+    + setText(text: String): void
+  }
+  class InputManager {
+    + registerLayer(layer: InputLayer): void
+    + dispatchPointer(event: PointerEvent): void
+    + dispatchKeyboard(event: KeyboardEvent): void
+  }
+  class DefaultInputLayer
+  class PointerEvent
+  class KeyboardEvent
 }
 
-class "processing.core.PApplet" as PApplet <<Infrastructure>>
-class "processing.event.MouseEvent" as MouseEvent <<Infrastructure>>
+class "processing.core.PApplet" as PApplet
 
 Sketch --|> PApplet
-Sketch --> MainViewModel
-Sketch --> ThemeManager
-Sketch --> InputManager
-Sketch --> KeyboardState
-Sketch --> ProcessingKeyboardAdapter
-Sketch --> PointerState
-Sketch --> ProcessingPointerAdapter
-Sketch --> ButtonView
-Sketch --> SliderView
-Sketch --> LabelView
+MainInputLayer --|> DefaultInputLayer
+Button ..|> Control
+Label ..|> Control
 
-MainViewModel --> AppState
-MainViewModel --> IntervalTimer
-
-ProcessingKeyboardAdapter --> KeyboardState
-ProcessingKeyboardAdapter --> InputManager
-ProcessingKeyboardAdapter ..> KeyboardEvent
-
-ProcessingPointerAdapter --> PointerState
-ProcessingPointerAdapter --> KeyboardState
-ProcessingPointerAdapter --> InputManager
-ProcessingPointerAdapter ..> PointerEvent
-
-Launcher ..> Config
 Launcher ..> Sketch
-Launcher ..> Log
-Launcher ..> LogMessage
+Sketch ..> Config
+Sketch --> InputManager
+Sketch --> MainInputLayer
+Sketch --> Button
+Sketch --> Label
+Sketch ..> PointerEvent
 
-note right of Sketch
-Processing bootstrap only:
-settings, setup, draw,
-dependency wiring,
-control creation,
-and callback forwarding.
-end note
+MainInputLayer o--> PointerTarget
+MainInputLayer o--> KeyboardTarget
+MainInputLayer ..> PointerEvent
+MainInputLayer ..> KeyboardEvent
 
-note right of ProcessingKeyboardAdapter
-Translates Processing key callbacks
-into KeyboardEvent dispatch.
-Does not contain business logic
-or depend on Processing state holders.
-end note
-
-note right of ProcessingPointerAdapter
-Translates Processing mouse callbacks
-into PointerEvent dispatch.
-Reuses KeyboardState for
-modifier propagation.
-end note
-
-note right of MainViewModel
-Pure Java application logic.
-No Processing dependency.
-No direct input callback handling.
+note right of MainInputLayer
+Template-owned routing layer.
+The sketch registers public facade
+input methods explicitly.
 end note
 
 note bottom of Sketch
-Input flow:
-Processing -> Adapter -> State
--> InputManager -> Controls
+Behavior stays in the sketch:
+button click increments local state
+and updates the label facade.
 end note
 @enduml

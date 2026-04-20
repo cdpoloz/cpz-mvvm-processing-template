@@ -1,6 +1,7 @@
-package com.cpz.processingtemplate.config;
+package com.cpz.processing.template.config;
 
-import com.cpz.processingtemplate.logging.LogFormatter;
+import com.cpz.processing.template.logging.Log;
+import com.cpz.processing.template.logging.LogFormatter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +19,7 @@ import java.util.logging.Level;
  * Bootstrap configuration ({@code config} package) for the logging infrastructure.
  * <p>
  * Provides preconfigured handlers for file and console output. This class contains no business
- * logic and is used by {@link com.cpz.processingtemplate.logging.Log}.
+ * logic and is used by {@link Log}.
  * </p>
  *
  * @author CPZ

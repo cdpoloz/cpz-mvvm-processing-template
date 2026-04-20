@@ -1,177 +1,182 @@
 # Architecture
 
-The only architectural source of truth for this template is `cpz-mvvm-processing-controls`.
-This project is a thin consumer of that library, not a parallel framework.
+This repository is a consumer template for `cpz-mvvm-processing-controls`.
 
-## Main Rule
+The controls project is the architectural source of truth for reusable UI
+behavior. The template exists to show how a Processing sketch can wire the
+framework from the outside using public facades and explicit input routing.
 
-The template owns only application-specific state, simple wiring, and demo composition:
+---
 
-- `model`: application state.
-- `viewmodel`: application logic.
-- `main`: Processing bootstrap, dependency wiring, callback forwarding, and control drawing.
-- `input.keyboard`: adapter and state for keyboard input.
-- `input.pointer`: adapter and state for pointer input.
+## Template Responsibilities
 
-## Sketch Responsibilities
+The template owns:
 
-`Sketch` is intentionally narrow in scope:
+- Processing bootstrap
+- window/runtime configuration
+- sketch-specific control creation
+- explicit listener wiring
+- dispatch from Processing callbacks into framework-owned pointer events
+- app-level input routing through `MainInputLayer`
 
-- Configure Processing runtime values already prepared by `Config`.
-- Instantiate the theme, `InputManager`, adapters, and demo controls.
-- Forward Processing keyboard and pointer callbacks to the corresponding adapters.
-- Call `draw()` on controls after syncing view state from `MainViewModel`.
+The template does not own:
 
-`Sketch` does not:
+- control MVVM internals
+- control views or view models
+- control-specific input adapters
+- rendering pipelines
+- automatic binding
+- global theme or input state
 
-- interpret keyboard or pointer state directly
-- use deprecated Processing keyboard APIs such as `keyEvent`
-- implement its own input framework
-- contain business logic that belongs in `MainViewModel`
+---
+
+## Components
+
+### Launcher
+
+`Launcher` is the application entry point.
+
+It loads `data/config.properties`, configures logging shutdown, and starts
+`Sketch` through Processing.
+
+### Config
+
+`Config` applies the current window bootstrap:
+
+- window icon
+- screen-relative size
+- renderer
+- smoothing
+- frame rate
+- window title
+
+It is application-side setup. It is intentionally outside the controls framework.
+
+### Sketch
+
+`Sketch` is the example consumer.
+
+It creates public facades from `controls`, wires listeners, dispatches pointer
+events, and draws controls.
+
+Current controls:
+
+- `Button btnTest`
+- `Label lblTest`
+
+Current behavior:
+
+- clicking the button increments a local counter
+- the label text is updated explicitly from the sketch
+- the label is not registered as an input target
+- keyboard input is not used by this minimal example
+
+### MainInputLayer
+
+`MainInputLayer` is the template-owned input layer.
+
+It receives normalized `PointerEvent` and `KeyboardEvent` instances from
+`InputManager` and forwards them to targets registered by the sketch. The
+current sketch registers one pointer target, but the layer is already prepared
+for keyboard-aware controls.
+
+Registration is explicit:
+
+```java
+MainInputLayer mainInputLayer = new MainInputLayer(0)
+        .addPointerTarget(button::handlePointerEvent);
+inputManager.registerLayer(mainInputLayer);
+```
+
+Future pointer and keyboard-aware controls can be added without changing the
+structure of the layer:
+
+```java
+mainInputLayer
+        .addPointerTarget(slider::handlePointerEvent)
+        .addPointerTarget(textField::handlePointerEvent)
+        .addKeyboardTarget(textField::handleKeyboardEvent);
+```
+
+This keeps the app layer responsible for routing while still using only public
+facade APIs. The layer uses simple template semantics: an event is consumed when
+at least one registered target receives it.
+
+---
 
 ## Input Flow
 
-Keyboard flow:
-
-`Processing -> ProcessingKeyboardAdapter -> KeyboardState -> InputManager -> KeyboardEvent -> Controls`
-
-Pointer flow:
-
-`Processing -> ProcessingPointerAdapter -> PointerState -> InputManager -> PointerEvent -> Controls`
-
-The adapters translate Processing callbacks into the controls library input model.
-The state classes retain current input state so modifier and pointer information can be reused across callbacks.
-
-Simplified end-to-end view:
+The final controls framework model is:
 
 ```text
-Processing (or any source)
+External Source -> Adapter -> InputManager -> InputLayer -> InputAdapter -> ViewModel
+```
+
+In the current example:
+
+```text
+Processing mouse callbacks
         |
         v
-Adapters (Keyboard / Pointer)
-        |
-        v
-State (KeyboardState / PointerState)
+Sketch creates PointerEvent
         |
         v
 InputManager
         |
         v
-Controls (via InputLayer & Adapters)
+MainInputLayer
         |
         v
-ViewModel
+Button facade
 ```
 
-## Input Components
+`Sketch` currently adapts mouse callbacks directly because the example is small.
+Keyboard dispatch is supported by `MainInputLayer`, but the example does not
+create or dispatch `KeyboardEvent` instances. The important boundary is that the
+controls framework receives normalized framework events, not Processing callback
+state.
 
-### KeyboardState
+---
 
-Responsibility:
-- Store current keyboard state, including pressed modifiers and pressed key codes.
+## Composition Rule
 
-Dependencies:
-- None outside the Java standard library.
+The sketch owns behavior.
 
-Does not:
-- depend on Processing
-- dispatch events
-- contain control logic
+Controls expose public methods and listeners. The sketch decides how controls
+affect each other:
 
-### ProcessingKeyboardAdapter
+```java
+button.setClickListener(this::btnTestClicked);
+```
 
-Responsibility:
-- Receive Processing keyboard callbacks.
-- Update `KeyboardState`.
-- Dispatch `KeyboardEvent` instances through `InputManager`.
+```java
+private void btnTestClicked() {
+    clickCount++;
+    label.setText("Click count = " + clickCount);
+}
+```
 
-Dependencies:
-- `KeyboardState`
-- `InputManager`
+There is no binding DSL and no automatic synchronization. That is intentional.
 
-Does not:
-- store application state
-- interpret ViewModel behavior
-- use deprecated `keyEvent`
+---
 
-### PointerState
+## Extension Pattern
 
-Responsibility:
-- Store pointer position, pressed state, active button, and wheel delta.
+When adding a new interactive control:
 
-Dependencies:
-- None outside the Java standard library.
+1. Create the facade in `Sketch.setup()`.
+2. Register its public pointer and/or keyboard input method in `MainInputLayer`.
+3. Attach any listeners in `Sketch`.
+4. Update other controls explicitly from sketch methods.
+5. Draw it in `Sketch.draw()`.
 
-Does not:
-- depend on Processing
-- dispatch events
-- contain control logic
+For non-interactive controls such as `Label`, create and draw the facade, but do
+not register it as an input target.
 
-### ProcessingPointerAdapter
+---
 
-Responsibility:
-- Receive Processing pointer callbacks.
-- Update `PointerState`.
-- Reuse `KeyboardState` modifier flags.
-- Dispatch `PointerEvent` instances through `InputManager`.
+## Related
 
-Dependencies:
-- `PointerState`
-- `KeyboardState`
-- `InputManager`
-
-Does not:
-- implement control behavior
-- contain business logic
-- bypass the controls input pipeline
-
-## Allowed
-
-- Creating app-specific state and logic.
-- Instantiating controls from the library and binding them to `MainViewModel`.
-- Using `ThemeManager`, `InputManager`, `KeyboardEvent`, and `PointerEvent` from the library.
-- Extending the template with more app-specific screens or controls while preserving the same input flow.
-
-## Usage Guidelines
-
-DO:
-
-- Forward Processing callbacks to the input adapters.
-- Keep `MainViewModel` free of Processing dependencies.
-- Use controls from `cpz-mvvm-processing-controls` as the UI layer.
-- Keep `Sketch` focused on bootstrap, forwarding, and drawing.
-
-DO NOT:
-
-- Handle input logic directly in `Sketch`.
-- Access `mouseX`, `mouseY`, `key`, or `keyCode` outside adapters.
-- Reintroduce custom input systems or direct Processing-to-control shortcuts.
-- Rebuild framework pieces that already belong to the controls project.
-
-## Not Allowed
-
-- Reintroducing a custom MVVM framework.
-- Reimplementing `InputManager` or control-side input behavior.
-- Handling keyboard modifiers in `Sketch` through deprecated Processing APIs.
-- Creating direct Processing-to-control shortcuts that skip adapters and state holders.
-- Recreating legacy render or input systems inside the template.
-
-## Related Project
-
-`cpz-mvvm-processing-controls` is the framework project.
-This template is the starter consumer project.
-
-Use the controls project as the reference for:
-
-- shared UI behavior
-- control-side input handling
-- theming and rendering infrastructure
-
-## Checklist
-
-- `Sketch` only handles bootstrap, dependency wiring, callback forwarding, and `draw()`.
-- `MainViewModel` remains pure Java.
-- Controls consume `KeyboardEvent` and `PointerEvent` through `InputManager`.
-- Keyboard state lives in `KeyboardState`.
-- Pointer state lives in `PointerState`.
-- No references remain to `keyEvent` or removed legacy input classes.
+- [Project README](../README.md)
+- [UML Architecture](uml/uml-architecture.puml)
+- [UML Detail](uml/uml-detail.puml)

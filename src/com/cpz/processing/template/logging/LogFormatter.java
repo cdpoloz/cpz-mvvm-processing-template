@@ -1,4 +1,4 @@
-package com.cpz.processingtemplate.logging;
+package com.cpz.processing.template.logging;
 
 import org.jetbrains.annotations.NotNull;
 

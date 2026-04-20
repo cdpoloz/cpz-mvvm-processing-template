@@ -1,8 +1,7 @@
-package com.cpz.processingtemplate.main;
+package com.cpz.processing.template.main;
 
-import com.cpz.processingtemplate.config.Config;
-import com.cpz.processingtemplate.logging.Log;
-import com.cpz.processingtemplate.logging.LogMessage;
+import com.cpz.processing.template.logging.Log;
+import com.cpz.processing.template.logging.LogMessage;
 import processing.core.PApplet;
 
 import java.io.File;
@@ -50,11 +49,8 @@ public class Launcher {
             LOG.severe(LogMessage.fileLoadError(propertiesPath));
             System.exit(1);
         }
-        // Prepare the main sketch.
-        Sketch sketch = Config.createWindowSketchConfiguration();
-        Config.initializeSketch(sketch);
         // Run the main program.
-        new Thread(() -> PApplet.runSketch(new String[]{"com.cpz.processingtemplate.main.Sketch"}, sketch)).start();
+        PApplet.main(Sketch.class);
     }
 
 }
