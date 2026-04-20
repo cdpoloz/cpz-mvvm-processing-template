@@ -238,3 +238,11 @@ another framework.
 ## License
 
 This project is licensed under the MIT License.
+
+---
+
+## Author
+
+**Carlos Polo Zamora**  
+GitHub: https://github.com/cdpoloz  
+Alias: CPZ / cepezeta / cdpoloz
