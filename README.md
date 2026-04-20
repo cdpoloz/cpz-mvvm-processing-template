@@ -5,32 +5,23 @@
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 [![GitHub](https://img.shields.io/badge/GitHub-cdpoloz-181717?logo=github)](https://github.com/cdpoloz)
 
-A starter Processing sketch that consumes `cpz-mvvm-processing-controls`
-through its public facades, explicit input routing, and sketch-owned behavior.
+A minimal, ready-to-run Processing template built on top of
+`cpz-mvvm-processing-controls`.
 
----
-
-## Key design decisions
-
-- Companion template, not a second framework
-- Public facades only (`Button`, `Label`, and other controls as your sketch grows)
-- Explicit input routing through `InputManager` and a template-owned `MainInputLayer`
-- Behavior and binding stay in the sketch
-- Configuration and launch bootstrap stay application-side and replaceable
-- No automatic binding, no reflection, no hidden global state
+Clone it, run it, click the button — and you're ready to start building.
 
 ---
 
 ## Overview
 
-This repository is a clean starting point for building a Processing desktop
+This repository is a clean starting point for building Processing desktop
 application with `cpz-mvvm-processing-controls`.
 
 `cpz-mvvm-processing-controls` is the framework. It owns the reusable UI
 controls, MVVM internals, rendering pipeline, event types, theming, and input
 manager.
 
-This template owns only the application side:
+This template contains only the application-side code:
 
 - `Launcher`: loads `data/config.properties` and starts the Processing sketch
 - `Config`: applies window size, icon, smoothing, frame rate, and title
@@ -43,7 +34,33 @@ button increments a counter, and a label displays the result. The label uses
 
 ---
 
+## What happens when you run it
+
+- A window opens with a button and a label
+- Clicking the button increments a counter
+- The label updates immediately with the new value
+- The label uses a custom font loaded from `data/font`
+
+Everything is wired explicitly in the sketch:
+no binding system, no hidden behavior.
+
+---
+
+## Quick start
+
+1. Clone this repository
+2. Open it in your Java IDE (IntelliJ recommended)
+3. Add Processing 4.5.x and `cpz-mvvm-processing-controls` to the classpath
+4. Run `com.cpz.processing.template.main.Launcher`
+
+You should see a window with a button and a label.
+Click the button to verify everything is working.
+
+---
+
 ## Mental Model
+
+At a glance, the template behaves like this:
 
 ```text
 Template sketch
@@ -71,9 +88,20 @@ internals.
 
 ---
 
+## Key design decisions
+
+- Companion template, not a second framework
+- Public facades only (`Button`, `Label`, and other controls as your sketch grows)
+- Explicit input routing through `InputManager` and a template-owned `MainInputLayer`
+- Behavior and binding stay in the sketch
+- Configuration and launch bootstrap stay application-side and replaceable
+- No automatic binding, no reflection, no hidden global state
+
+---
+
 ## Current Example
 
-The current sketch creates:
+The example is intentionally minimal and interactive:
 
 - `Button btnTest`: interactive facade from `controls`
 - `Label lblTest`: non-interactive facade from `controls`
@@ -103,7 +131,25 @@ There is no automatic binding layer. The sketch decides what a click means.
 
 ---
 
+## Minimal Editing Path
+
+1. Add controls in `Sketch.setup()`.
+2. Register pointer and/or keyboard-aware controls in `MainInputLayer`.
+3. Attach listeners to the facades that own user actions.
+4. Update other facades from sketch methods.
+5. Draw controls in `Sketch.draw()`.
+
+The default example uses direct facade construction. JSON composition from
+`controls` can be added later when your sketch needs structural configuration,
+but behavior should still stay in sketch code.
+
+---
+
 ## Input Routing
+### How input flows in the template
+
+This section explains the full input pipeline.  
+If you just want to use the template, you can skip this for now.
 
 The framework input model is:
 
@@ -151,20 +197,6 @@ target receives an event, the layer consumes that event.
 
 ---
 
-## Minimal Editing Path
-
-1. Add controls in `Sketch.setup()`.
-2. Register pointer and/or keyboard-aware controls in `MainInputLayer`.
-3. Attach listeners to the facades that own user actions.
-4. Update other facades from sketch methods.
-5. Draw controls in `Sketch.draw()`.
-
-The default example uses direct facade construction. JSON composition from
-`controls` can be added later when your sketch needs structural configuration,
-but behavior should still stay in sketch code.
-
----
-
 ## Project Structure
 
 ```text
@@ -187,21 +219,10 @@ docs/
 
 ---
 
-## Getting Started
-
-1. Clone this repository.
-2. Open it in your Java IDE.
-3. Make sure Processing 4.5.x and `cpz-mvvm-processing-controls` are on the classpath.
-4. Run `com.cpz.processing.template.main.Launcher`.
-5. Edit `Sketch` to replace the example button/label with your own controls.
-
-The repository currently keeps `Config` and `Launcher` as practical bootstrap
-code for this template. They are application-side infrastructure and can be
-simplified or replaced in downstream sketches.
-
----
-
 ## Relationship With Controls
+
+If you're starting from scratch, begin with this template.  
+If you want to understand or extend the framework itself, go to controls.
 
 Use `cpz-mvvm-processing-controls` for:
 
@@ -224,6 +245,12 @@ Use this template for:
 The boundary is intentional: controls supplies reusable UI infrastructure; the
 template shows how a consuming sketch wires that infrastructure without becoming
 another framework.
+
+---
+
+## Related project
+
+[cpz-mvvm-processing-controls](https://github.com/cdpoloz/cpz-mvvm-processing-controls)
 
 ---
 
