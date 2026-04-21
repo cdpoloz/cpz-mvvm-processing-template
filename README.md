@@ -222,13 +222,17 @@ data/
 
 src/com/cpz/processing/template/
   config/                    Processing window setup helpers
-  input/MainInputLayer.java  Template-owned pointer/keyboard routing layer
+  examples/noise/            Minimal cpz-utils noise integration sketches
+  input/
+    MainInputLayer.java
+    noise/ProcessingNoiseSource.java
   logging/                   Local logging bootstrap
   main/Launcher.java         Application entry point
   main/Sketch.java           Example sketch and behavior wiring
 
 docs/
   architecture.md            Template architecture notes
+  noise-examples.md          ProcessingNoiseSource + cpz-utils noise examples
   uml/                       Lightweight PlantUML diagrams
 ```
 
@@ -272,6 +276,7 @@ another framework.
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Noise Examples](docs/noise-examples.md)
 - [UML Architecture](docs/uml/uml-architecture.puml)
 - [UML Detail](docs/uml/uml-detail.puml)
 

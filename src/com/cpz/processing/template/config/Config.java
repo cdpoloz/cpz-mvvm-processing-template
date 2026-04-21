@@ -1,6 +1,7 @@
 package com.cpz.processing.template.config;
 
 import com.cpz.processing.template.main.Sketch;
+import processing.core.PApplet;
 import processing.opengl.PJOGL;
 
 import java.awt.*;
@@ -15,7 +16,7 @@ import static processing.core.PConstants.P2D;
  */
 public class Config {
 
-    public static void settings(Sketch sk) {
+    public static void settings(PApplet sk) {
         LOG.info("Starting settings");
         // window icon
         PJOGL.setIcon("data" + File.separator + "img" + File.separator + PROPS.getProperty("windowIcon"));
@@ -34,7 +35,7 @@ public class Config {
         LOG.info("Finished settings");
     }
 
-    public static void setup(Sketch sk) {
+    public static void setup(PApplet sk) {
         LOG.info("Starting initial setup");
         // frames per second
         sk.frameRate(Integer.parseInt(PROPS.getProperty("fps")));
