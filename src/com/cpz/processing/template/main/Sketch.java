@@ -8,9 +8,9 @@ import com.cpz.processing.controls.controls.label.style.HorizontalAlign;
 import com.cpz.processing.controls.controls.label.style.VerticalAlign;
 import com.cpz.processing.controls.core.input.InputManager;
 import com.cpz.processing.controls.core.input.PointerEvent;
-import com.cpz.processing.controls.core.util.Colors;
 import com.cpz.processing.template.config.Config;
 import com.cpz.processing.template.input.MainInputLayer;
+import com.cpz.utils.color.Colors;
 import processing.core.PApplet;
 
 import java.io.File;
