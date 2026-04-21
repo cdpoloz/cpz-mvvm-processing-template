@@ -78,6 +78,7 @@ public class Sketch extends PApplet {
         clickCount++;
         label.setText("Click count = " + clickCount);
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="*** mouse events ***">
     public void mouseMoved() {

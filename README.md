@@ -114,6 +114,28 @@ internals.
 
 ---
 
+## Renderer Policy
+
+The main template uses `P2D` by default.
+
+`P2D` is Processing's OpenGL-based 2D renderer. It is the default choice here
+because the template is intended for real-time 2D sketches and UI-driven
+applications where GPU-backed rendering is a practical baseline.
+
+### Window customization limitations
+
+Borderless window customization depends on AWT-based surfaces.
+
+`ProcessingWindowConfigurator` accesses the native window through
+`PSurfaceAWT` and `Frame`. This only works with Processing's default renderer
+(`JAVA2D`).
+
+It does not work with `P2D` or `P3D`, because those renderers use OpenGL
+surfaces instead of the AWT surface expected by `ProcessingWindowConfigurator`.
+Those renderers do not expose an AWT Frame.
+
+---
+
 ## Current Example
 
 The example is intentionally minimal and interactive:
@@ -122,6 +144,10 @@ The example is intentionally minimal and interactive:
 - `Label lblTest`: non-interactive facade from `controls`
 - `InputManager`: framework dispatcher
 - `MainInputLayer`: app-owned input layer that forwards pointer events to the button
+
+The main example runs with the template renderer policy, so it uses `P2D`.
+Window behavior examples, such as the borderless window sketch, live separately
+because they may require different renderer constraints.
 
 The current example uses mouse input only. `MainInputLayer` also supports
 keyboard targets so downstream sketches can register text fields, numeric
@@ -233,6 +259,7 @@ src/com/cpz/processing/template/
 docs/
   architecture.md            Template architecture notes
   noise-examples.md          ProcessingNoiseSource + cpz-utils noise examples
+  window-borderless.md       Borderless window renderer limitations
   uml/                       Lightweight PlantUML diagrams
 ```
 
@@ -277,6 +304,7 @@ another framework.
 
 - [Architecture](docs/architecture.md)
 - [Noise Examples](docs/noise-examples.md)
+- [Borderless Window Example](docs/window-borderless-example.md)
 - [UML Architecture](docs/uml/uml-architecture.puml)
 - [UML Detail](docs/uml/uml-detail.puml)
 

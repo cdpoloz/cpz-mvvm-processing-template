@@ -1,6 +1,5 @@
 package com.cpz.processing.template.config;
 
-import com.cpz.processing.template.main.Sketch;
 import processing.core.PApplet;
 import processing.opengl.PJOGL;
 

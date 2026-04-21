@@ -11,6 +11,8 @@ Both sketches use `ProcessingNoiseSource` as the adapter between Processing's
 Processing in the template layer while `cpz-utils` remains independent from
 Processing.
 
+---
+
 ## NoiseValueSketch
 
 `NoiseValueSketch` demonstrates the one-dimensional case:
@@ -22,6 +24,8 @@ Processing.
 - map the value from `0..1` to a vertical screen coordinate
 
 The sketch draws a horizontal line that moves smoothly up and down.
+
+---
 
 ## NoiseVector3Sketch
 
