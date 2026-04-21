@@ -312,7 +312,8 @@ another framework.
 
 ## License
 
-This project is licensed under the MIT License.
+
+`cpz-processing-template` is released under the MIT License. See [LICENSE](LICENSE).
 
 ---
 
