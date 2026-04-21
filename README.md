@@ -313,7 +313,7 @@ another framework.
 ## License
 
 
-`cpz-processing-template` is released under the MIT License. See [LICENSE](LICENSE).
+`cpz-mvvm-processing-template` is released under the MIT License. See [LICENSE](LICENSE).
 
 ---
 
