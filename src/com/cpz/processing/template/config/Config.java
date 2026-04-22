@@ -1,9 +1,10 @@
 package com.cpz.processing.template.config;
 
+import com.cpz.processing.template.window.DisplayDetector;
+import com.cpz.processing.template.window.DisplayInfo;
 import processing.core.PApplet;
 import processing.opengl.PJOGL;
 
-import java.awt.*;
 import java.io.File;
 
 import static com.cpz.processing.template.main.Launcher.LOG;
@@ -18,15 +19,14 @@ public class Config {
     public static void settings(PApplet sk) {
         LOG.info("Starting settings");
         // window icon
-        PJOGL.setIcon("data" + File.separator + "img" + File.separator + PROPS.getProperty("windowIcon"));
+        PJOGL.setIcon("data" + File.separator + "img" + File.separator + PROPS.getProperty("window.icon"));
         // screen size
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice screen = ge.getDefaultScreenDevice();
-        int screenWidth = screen.getDisplayMode().getWidth();
-        int screenHeight = screen.getDisplayMode().getHeight();
+        DisplayInfo screen = DisplayDetector.resolveTargetDisplay(true);
+        int screenWidth = screen.width();
+        int screenHeight = screen.height();
         // screen scale
-        float horizontalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("horizontalScreenScaleFactor"));
-        float verticalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("verticalScreenScaleFactor"));
+        float horizontalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("horizontal.screen.scale.factor"));
+        float verticalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("vertical.screen.scale.factor"));
         // window size
         sk.size((int) (screenWidth * horizontalScreenScaleFactor), (int) (screenHeight * verticalScreenScaleFactor), P2D);
         // antialiasing
@@ -39,7 +39,7 @@ public class Config {
         // frames per second
         sk.frameRate(Integer.parseInt(PROPS.getProperty("fps")));
         // window title
-        sk.getSurface().setTitle(PROPS.getProperty("windowTitle"));
+        sk.getSurface().setTitle(PROPS.getProperty("window.title"));
         LOG.info("Finished initial setup");
     }
 

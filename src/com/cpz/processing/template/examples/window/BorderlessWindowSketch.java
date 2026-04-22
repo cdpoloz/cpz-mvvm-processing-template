@@ -1,6 +1,6 @@
 package com.cpz.processing.template.examples.window;
 
-import com.cpz.processing.infrastructure.window.ProcessingWindowConfigurator;
+import com.cpz.processing.template.window.ProcessingWindowConfigurator;
 import processing.core.PApplet;
 import processing.core.PSurface;
 
@@ -15,7 +15,10 @@ public class BorderlessWindowSketch extends PApplet {
     private float circleY;
 
     public PSurface initSurface() {
-        return ProcessingWindowConfigurator.setUndecorated(super.initSurface(), Boolean.parseBoolean(PROPS.getProperty("windowUndecorated")));
+        PSurface surface = super.initSurface();
+        boolean undecorated = Boolean.parseBoolean(PROPS.getProperty("window.undecorated"));
+        ProcessingWindowConfigurator.setUndecorated(surface, undecorated);
+        return ProcessingWindowConfigurator.setAlwaysOnTop(surface, true);
     }
 
     public void settings() {
