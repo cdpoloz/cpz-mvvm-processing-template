@@ -54,13 +54,13 @@ public class Launcher {
             System.exit(1);
         }
         // Run the main program.
-        //PApplet.main(Sketch.class);
+        PApplet.main(Sketch.class);
 
         // or you can run one of the available examples
         //PApplet.main(NoiseValueSketch.class);
         //PApplet.main(NoiseVector3Sketch.class);
         //PApplet.main(BorderlessWindowSketch.class);
-        PApplet.main(WindowPositionSketch.class);
+        //PApplet.main(WindowPositionSketch.class);
     }
 
 }
