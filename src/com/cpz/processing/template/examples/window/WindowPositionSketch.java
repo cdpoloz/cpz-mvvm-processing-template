@@ -26,10 +26,9 @@ public class WindowPositionSketch extends PApplet {
         boolean usePrimary = Boolean.parseBoolean(PROPS.getProperty("window.display.primary"));
         target = DisplayDetector.resolveTargetDisplay(usePrimary);
         // window size
-        float horizontalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("horizontal.screen.scale.factor"));
-        float verticalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("vertical.screen.scale.factor"));
-        int sketchWidth = (int) (target.width() * horizontalScreenScaleFactor);
-        int sketchHeight = (int) (target.height() * verticalScreenScaleFactor);
+        float screenScaleFactor = Float.parseFloat(PROPS.getProperty("screen.scale.factor"));
+        int sketchWidth = (int) (target.width() * screenScaleFactor);
+        int sketchHeight = (int) (target.height() * screenScaleFactor);
         size(sketchWidth, sketchHeight, P2D);
         // antialiasing
         smooth(Integer.parseInt(PROPS.getProperty("smoothing")));

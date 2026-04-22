@@ -25,10 +25,9 @@ public class Config {
         int screenWidth = screen.width();
         int screenHeight = screen.height();
         // screen scale
-        float horizontalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("horizontal.screen.scale.factor"));
-        float verticalScreenScaleFactor = Float.parseFloat(PROPS.getProperty("vertical.screen.scale.factor"));
+        float screenScaleFactor = Float.parseFloat(PROPS.getProperty("screen.scale.factor"));
         // window size
-        sk.size((int) (screenWidth * horizontalScreenScaleFactor), (int) (screenHeight * verticalScreenScaleFactor), P2D);
+        sk.size((int) (screenWidth * screenScaleFactor), (int) (screenHeight * screenScaleFactor), P2D);
         // antialiasing
         sk.smooth(Integer.parseInt(PROPS.getProperty("smoothing")));
         LOG.info("Finished settings");
