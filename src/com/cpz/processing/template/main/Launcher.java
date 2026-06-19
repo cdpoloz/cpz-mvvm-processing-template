@@ -17,7 +17,7 @@ import java.util.Properties;
 /**
  * Bootstrap entry point ({@code main} package) responsible for starting the application.
  * <p>
- * Loads configuration, prepares the main {@link Sketch}, and launches the Processing runtime.
+ * Loads configuration, prepares the main {@link TemplateSketch}, and launches the Processing runtime.
  * This class contains no MVVM logic.
  * </p>
  *
@@ -33,7 +33,7 @@ public class Launcher {
     /**
      * Application entry point.
      * <p>
-     * Loads properties, configures logging shutdown, creates the {@link Sketch}, initializes it,
+     * Loads properties, configures logging shutdown, creates the {@link TemplateSketch}, initializes it,
      * and runs Processing on a dedicated thread.
      * </p>
      *
@@ -54,13 +54,7 @@ public class Launcher {
             System.exit(1);
         }
         // Run the main program.
-        PApplet.main(Sketch.class);
-
-        // or you can run one of the available examples
-        //PApplet.main(NoiseValueSketch.class);
-        //PApplet.main(NoiseVector3Sketch.class);
-        //PApplet.main(BorderlessWindowSketch.class);
-        //PApplet.main(WindowPositionSketch.class);
+        PApplet.main(TemplateSketch.class);
     }
 
 }
