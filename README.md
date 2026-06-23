@@ -30,7 +30,7 @@ This template contains only the application-side code:
 
 The example intentionally stays direct: pointer input reaches a button, the
 button increments a counter, and a label displays the result. The label uses
-`data/font/abel-regular.ttf`.
+`data/font/JetBrainsMono.ttf`.
 
 ---
 
@@ -48,30 +48,63 @@ no binding system, no hidden behavior.
 
 ## Quick start
 
-1. Clone this repository
-2. Open it in your Java IDE (IntelliJ recommended)
-3. Make sure `cpz-utils:0.2.1` and `cpz-mvvm-processing-controls:0.3.0` are installed in your local Maven repository
-4. Open the project as a Maven project in IntelliJ
-5. Run `com.cpz.processing.template.main.Launcher`
+### Requirements
+
+- JDK 17 or newer
+- Maven
+- IntelliJ IDEA or another Java IDE with Maven support
+
+Processing does not need to be installed manually.
+The template does not require copied JARs or manual classpath configuration.
+
+### IntelliJ
+
+1. Create a new repository from this template, or clone it directly.
+2. Open the project in IntelliJ as a Maven project.
+3. Reload Maven so IntelliJ resolves the dependencies from `pom.xml`.
+4. Run `com.cpz.processing.template.main.Launcher`.
 
 You should see a window with a button and a label.
 Click the button to verify everything is working.
+
+### Command line
+
+```bash
+mvn clean package
+mvn clean test
+```
 
 ---
 
 ## Dependencies
 
-This template uses Maven for the CPZ libraries:
+This template uses normal Maven dependencies:
 
-- `com.cpz:cpz-utils:0.2.1`
-- `com.cpz:cpz-mvvm-processing-controls:0.3.0`
+- `org.processing:core:4.5.2`
+- `com.cpz:cpz-mvvm-processing-controls:0.3.1`
+- `com.cpz:cpz-utils:0.2.2`
+- `org.jetbrains:annotations:26.0.2`
 
-Processing 4.5.2 remains under `lib/Processing 4.5.2` and is referenced from
-`pom.xml` with `systemPath` dependencies so the sketch can keep running from
-IntelliJ without publishing Processing to a repository first.
+`org.processing:core` is declared directly because the template extends
+`PApplet` and uses Processing types in application code.
 
-Do not add the old CPZ JARs from `lib/` to the IntelliJ module classpath. They
-are superseded by the Maven dependencies above.
+`cpz-utils` is declared directly because the noise examples use
+`com.cpz.utils.noise` classes.
+
+No local Processing directory is required. Do not copy CPZ or Processing JARs
+into the project.
+
+During local CPZ development, make sure the CPZ artifacts are available to
+Maven. If they are not published to a repository configured in your environment,
+install them in your local Maven repository first:
+
+```bash
+# from the cpz-utils checkout
+mvn clean install
+
+# from the cpz-mvvm-processing-controls checkout
+mvn clean install
+```
 
 ---
 
@@ -245,11 +278,9 @@ target receives an event, the layer consumes that event.
 ```text
 data/
   config.properties          Window and runtime properties used by Launcher/Config
+  config/template-sketch.json Example control configuration
   font/JetBrainsMono.ttf     Font used by the example Label
   img/windowIcon.png         Window icon
-
-lib/
-  Processing 4.5.2/          Local Processing runtime used by Maven systemPath
 
 src/main/java/com/cpz/processing/template/
   config/                    Processing window setup helpers
@@ -266,12 +297,6 @@ src/main/resources/
 src/test/java/
 
 src/test/resources/
-
-docs/
-  architecture.md            Template architecture notes
-  noise-examples.md          ProcessingNoiseSource + cpz-utils noise examples
-  window-borderless.md       Borderless window renderer limitations
-  uml/                       Lightweight PlantUML diagrams
 ```
 
 ---
@@ -308,16 +333,6 @@ another framework.
 ## Related project
 
 [cpz-mvvm-processing-controls](https://github.com/cdpoloz/cpz-mvvm-processing-controls)
-
----
-
-## Documentation
-
-- [Architecture](docs/architecture.md)
-- [Noise Examples](docs/noise-examples.md)
-- [Borderless Window Example](docs/window-borderless-example.md)
-- [UML Architecture](docs/uml/uml-architecture.puml)
-- [UML Detail](docs/uml/uml-detail.puml)
 
 ---
 
