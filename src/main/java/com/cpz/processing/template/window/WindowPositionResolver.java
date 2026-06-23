@@ -26,13 +26,17 @@ public final class WindowPositionResolver {
         int maxY = targetDisplay.y() + targetDisplay.height() - outerHeight;
         if (maxX < minX) maxX = minX;
         if (maxY < minY) maxY = minY;
-        absoluteX = Math.clamp(absoluteX, minX, maxX);
-        absoluteY = Math.clamp(absoluteY, minY, maxY);
+        absoluteX = clamp(absoluteX, minX, maxX);
+        absoluteY = clamp(absoluteY, minY, maxY);
         return new WindowPosition(absoluteX, absoluteY);
     }
 
     private static int toRelativeCoordinate(float value, int displaySize) {
         if (value < 1f) return (int) (value * displaySize);
         return (int) value;
+    }
+
+    private static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
     }
 }

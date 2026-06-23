@@ -47,3 +47,4 @@ nbbuild/
 .codex
 *.log
 /build
+/target/
