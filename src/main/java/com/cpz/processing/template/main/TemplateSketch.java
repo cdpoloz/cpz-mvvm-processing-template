@@ -70,7 +70,6 @@ public class TemplateSketch extends PApplet {
 
     // CONTINUAR AQUÍ **************************************************************************************************
     // AGREGAR CONTROLES DE EJEMPLO FALTANTES:
-    // - TextField
     // - NumericField
     // - DropDown
     // *****************************************************************************************************************
