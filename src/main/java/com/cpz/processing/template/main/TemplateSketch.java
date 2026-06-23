@@ -7,7 +7,6 @@ import com.cpz.processing.controls.controls.label.Label;
 import com.cpz.processing.controls.controls.radiogroup.RadioGroup;
 import com.cpz.processing.controls.controls.slider.Slider;
 import com.cpz.processing.controls.controls.textfield.TextField;
-import com.cpz.processing.controls.controls.textfield.input.TextFieldInputLayer;
 import com.cpz.processing.controls.controls.toggle.Toggle;
 import com.cpz.processing.controls.core.input.InputManager;
 import com.cpz.processing.controls.core.input.PointerEvent;
