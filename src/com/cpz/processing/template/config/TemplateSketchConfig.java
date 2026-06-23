@@ -2,21 +2,21 @@ package com.cpz.processing.template.config;
 
 import com.cpz.processing.controls.controls.Control;
 import com.cpz.processing.controls.controls.button.Button;
+import com.cpz.processing.controls.controls.checkbox.Checkbox;
 import com.cpz.processing.controls.controls.config.ControlConfigLoader;
 import com.cpz.processing.controls.controls.label.Label;
+import com.cpz.processing.controls.controls.radiogroup.RadioGroup;
 import com.cpz.processing.controls.controls.slider.Slider;
+import com.cpz.processing.controls.controls.textfield.TextField;
 import com.cpz.processing.controls.controls.toggle.Toggle;
-import com.cpz.processing.template.logging.LogMessage;
 import com.cpz.processing.template.main.TemplateSketch;
 import processing.opengl.PJOGL;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import static com.cpz.processing.template.main.Launcher.LOG;
+import static com.cpz.processing.template.main.Launcher.PROPS;
 import static processing.core.PConstants.P2D;
 
 /**
@@ -24,31 +24,22 @@ import static processing.core.PConstants.P2D;
  */
 public class TemplateSketchConfig {
 
-    public static final Properties TEMPLATE_PROPS = new Properties();
-
     public static void settings(TemplateSketch sk) {
+        if (sk == null) return;
         LOG.info("Starting settings");
-        String propertiesPath = "data" + File.separator + "config" + File.separator + "template-sketch.properties";
-        try (FileInputStream fis = new FileInputStream(propertiesPath)) {
-            TEMPLATE_PROPS.load(fis);
-        } catch (IOException e) {
-            LOG.severe(LogMessage.fileLoadError(propertiesPath));
-            System.exit(1);
-        }
-        // icono de la ventana
-        PJOGL.setIcon("data" + File.separator + "img" + File.separator + TEMPLATE_PROPS.getProperty("window.icon"));
+        PJOGL.setIcon("data" + File.separator + "img" + File.separator + PROPS.getProperty("window.icon"));
         // tamaño de ventana
-        sk.size(Integer.parseInt(TEMPLATE_PROPS.getProperty("sketch.width")), Integer.parseInt(TEMPLATE_PROPS.getProperty("sketch.height")), P2D);
+        sk.size(Integer.parseInt(PROPS.getProperty("sketch.width")), Integer.parseInt(PROPS.getProperty("sketch.height")), P2D);
         // smoothing
-        sk.smooth(Integer.parseInt(TEMPLATE_PROPS.getProperty("sketch.smoothing")));
+        sk.smooth(Integer.parseInt(PROPS.getProperty("sketch.smoothing")));
         LOG.info("Finished settings");
     }
 
     public static void initialSetup(TemplateSketch sk) {
         if (sk == null) return;
         LOG.info("Starting initial setup");
-        sk.frameRate(Integer.parseInt(TEMPLATE_PROPS.getProperty("sketch.fps")));
-        sk.getSurface().setTitle(TEMPLATE_PROPS.getProperty("window.title"));
+        sk.frameRate(Integer.parseInt(PROPS.getProperty("sketch.fps")));
+        sk.getSurface().setTitle(PROPS.getProperty("window.title"));
         LOG.info("Finished initial setup");
     }
 
@@ -73,6 +64,21 @@ public class TemplateSketchConfig {
                 .stream()
                 .filter(c -> c instanceof Toggle)
                 .forEach(tgl -> ((Toggle) tgl).setChangeListener(estado -> sk.tglClicked(tgl.getCode(), estado)));
+        controles
+                .values()
+                .stream()
+                .filter(c -> c instanceof Checkbox)
+                .forEach(chk -> ((Checkbox) chk).setChangeListener(estado -> sk.chkClicked(chk.getCode(), estado)));
+        controles
+                .values()
+                .stream()
+                .filter(c -> c instanceof RadioGroup)
+                .forEach(rg -> ((RadioGroup) rg).setChangeListener(selectedOption -> sk.rgClicked((RadioGroup) rg)));
+        controles
+                .values()
+                .stream()
+                .filter(c -> c instanceof TextField)
+                .forEach(tf -> ((TextField) tf).setChangeListener(text -> sk.tfChanged(tf.getCode(), text)));
         return controles;
     }
 
@@ -102,5 +108,26 @@ public class TemplateSketchConfig {
         Map<String, Toggle> toggles = new HashMap<>();
         controles.values().stream().filter(c -> c instanceof Toggle).forEach(tgl -> toggles.put(tgl.getCode(), (Toggle) tgl));
         return toggles;
+    }
+
+    public static Map<String, Checkbox> filtrarCheckboxes(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, Checkbox> checkboxes = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof Checkbox).forEach(chk -> checkboxes.put(chk.getCode(), (Checkbox) chk));
+        return checkboxes;
+    }
+
+    public static Map<String, RadioGroup> filtrarRadiogroups(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, RadioGroup> radiogroups = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof RadioGroup).forEach(rg -> radiogroups.put(rg.getCode(), (RadioGroup) rg));
+        return radiogroups;
+    }
+
+    public static Map<String, TextField> filtrarTextfields(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, TextField> textfields = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof TextField).forEach(tf -> textfields.put(tf.getCode(), (TextField) tf));
+        return textfields;
     }
 }

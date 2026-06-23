@@ -1,9 +1,5 @@
 package com.cpz.processing.template.main;
 
-import com.cpz.processing.template.examples.noise.NoiseValueSketch;
-import com.cpz.processing.template.examples.noise.NoiseVector3Sketch;
-import com.cpz.processing.template.examples.window.BorderlessWindowSketch;
-import com.cpz.processing.template.examples.window.WindowPositionSketch;
 import com.cpz.processing.template.logging.Log;
 import com.cpz.processing.template.logging.LogMessage;
 import processing.core.PApplet;
