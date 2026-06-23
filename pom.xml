@@ -43,9 +43,7 @@
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
-            <version>${processing.version}</version>
-            <scope>system</scope>
-            <systemPath>${processing.lib.dir}/core-${processing.version}.jar</systemPath>
+            <version>4.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
