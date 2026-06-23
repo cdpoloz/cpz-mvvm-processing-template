@@ -15,9 +15,10 @@ public final class DisplayDetector {
     public static DisplayInfo resolveTargetDisplay(boolean usePrimary) {
         List<DisplayInfo> displays = detectDisplays();
         if (displays.isEmpty()) throw new IllegalStateException("No displays detected");
-        if (displays.size() == 1) return displays.getFirst();
-        if (usePrimary) return displays.stream().filter(DisplayInfo::primary).findFirst().orElse(displays.getFirst());
-        return displays.stream().filter(display -> !display.primary()).findFirst().orElse(displays.getFirst());
+        DisplayInfo firstDisplay = displays.get(0);
+        if (displays.size() == 1) return firstDisplay;
+        if (usePrimary) return displays.stream().filter(DisplayInfo::primary).findFirst().orElse(firstDisplay);
+        return displays.stream().filter(display -> !display.primary()).findFirst().orElse(firstDisplay);
     }
 
     public static List<DisplayInfo> detectDisplays() {

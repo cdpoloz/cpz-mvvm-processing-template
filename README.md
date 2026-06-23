@@ -1,5 +1,5 @@
 # CPZ MVVM Processing Template
-![Java](https://img.shields.io/badge/Java-25+-orange)
+![Java](https://img.shields.io/badge/Java-17+-orange)
 ![Processing](https://img.shields.io/badge/Processing-4.5.x-blue)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
@@ -50,8 +50,9 @@ no binding system, no hidden behavior.
 
 1. Clone this repository
 2. Open it in your Java IDE (IntelliJ recommended)
-3. Add Processing 4.5.x and `cpz-mvvm-processing-controls` to the classpath
-4. Run `com.cpz.processing.template.main.Launcher`
+3. Make sure `cpz-utils:0.2.1` and `cpz-mvvm-processing-controls:0.3.0` are installed in your local Maven repository
+4. Open the project as a Maven project in IntelliJ
+5. Run `com.cpz.processing.template.main.Launcher`
 
 You should see a window with a button and a label.
 Click the button to verify everything is working.
@@ -60,16 +61,17 @@ Click the button to verify everything is working.
 
 ## Dependencies
 
-This template includes local copies of the required libraries under `lib/`:
+This template uses Maven for the CPZ libraries:
 
-- Processing 4.5.x
-- cpz-mvvm-processing-controls
+- `com.cpz:cpz-utils:0.2.1`
+- `com.cpz:cpz-mvvm-processing-controls:0.3.0`
 
-After cloning the repository, make sure your IDE adds those JARs to the project
-classpath before running `Launcher`.
+Processing 4.5.2 remains under `lib/Processing 4.5.2` and is referenced from
+`pom.xml` with `systemPath` dependencies so the sketch can keep running from
+IntelliJ without publishing Processing to a repository first.
 
-If your IDE does not detect them automatically, add the JAR files from `lib/`
-manually in the project/module dependencies.
+Do not add the old CPZ JARs from `lib/` to the IntelliJ module classpath. They
+are superseded by the Maven dependencies above.
 
 ---
 
@@ -243,18 +245,27 @@ target receives an event, the layer consumes that event.
 ```text
 data/
   config.properties          Window and runtime properties used by Launcher/Config
-  font/abel-regular.ttf      Font used by the example Label
+  font/JetBrainsMono.ttf     Font used by the example Label
   img/windowIcon.png         Window icon
 
-src/com/cpz/processing/template/
+lib/
+  Processing 4.5.2/          Local Processing runtime used by Maven systemPath
+
+src/main/java/com/cpz/processing/template/
   config/                    Processing window setup helpers
   examples/noise/            Minimal cpz-utils noise integration sketches
-  input/
-    MainInputLayer.java
-    noise/ProcessingNoiseSource.java
+  examples/window/           Window behavior examples
+  input/                     App-owned input routing
   logging/                   Local logging bootstrap
   main/Launcher.java         Application entry point
-  main/Sketch.java           Example sketch and behavior wiring
+  main/TemplateSketch.java   Example sketch and behavior wiring
+  window/                    Window positioning helpers
+
+src/main/resources/
+
+src/test/java/
+
+src/test/resources/
 
 docs/
   architecture.md            Template architecture notes
