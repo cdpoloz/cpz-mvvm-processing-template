@@ -4,17 +4,22 @@ import com.cpz.processing.controls.controls.Control;
 import com.cpz.processing.controls.controls.button.Button;
 import com.cpz.processing.controls.controls.checkbox.Checkbox;
 import com.cpz.processing.controls.controls.config.ControlConfigLoader;
+import com.cpz.processing.controls.controls.dropdown.DropDown;
 import com.cpz.processing.controls.controls.label.Label;
+import com.cpz.processing.controls.controls.numericfield.NumericField;
 import com.cpz.processing.controls.controls.radiogroup.RadioGroup;
 import com.cpz.processing.controls.controls.slider.Slider;
 import com.cpz.processing.controls.controls.textfield.TextField;
 import com.cpz.processing.controls.controls.toggle.Toggle;
+import com.cpz.processing.controls.core.input.InputManager;
+import com.cpz.processing.controls.core.overlay.OverlayManager;
 import com.cpz.processing.template.main.TemplateSketch;
 import processing.opengl.PJOGL;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
 import static com.cpz.processing.template.main.Launcher.LOG;
 import static com.cpz.processing.template.main.Launcher.PROPS;
 import static processing.core.PConstants.P2D;
@@ -43,11 +48,10 @@ public class TemplateSketchConfig {
         LOG.info("Finished initial setup");
     }
 
-    public static Map<String, Control> configurarControles(TemplateSketch sk) {
-        if (sk == null) return null;
-        // btnTemplate
+    public static Map<String, Control> setupControls(TemplateSketch sk, OverlayManager overlayManager, InputManager inputManager) {
+        if (sk == null || overlayManager == null || inputManager == null) return null;
         String templateConfigPath = "data" + File.separator + "config" + File.separator + "template-sketch.json";
-        ControlConfigLoader loader = new ControlConfigLoader(sk);
+        ControlConfigLoader loader = new ControlConfigLoader(sk, overlayManager, inputManager);
         Map<String, Control> controles = loader.load(templateConfigPath);
         controles
                 .values()
@@ -57,18 +61,18 @@ public class TemplateSketchConfig {
         controles
                 .values()
                 .stream()
-                .filter(c -> c instanceof Slider)
-                .forEach(sld -> ((Slider) sld).setChangeListener(valor -> sk.sldChanged(sld.getCode(), valor)));
-        controles
-                .values()
-                .stream()
-                .filter(c -> c instanceof Toggle)
-                .forEach(tgl -> ((Toggle) tgl).setChangeListener(estado -> sk.tglClicked(tgl.getCode(), estado)));
-        controles
-                .values()
-                .stream()
                 .filter(c -> c instanceof Checkbox)
                 .forEach(chk -> ((Checkbox) chk).setChangeListener(estado -> sk.chkClicked(chk.getCode(), estado)));
+        controles
+                .values()
+                .stream()
+                .filter(c -> c instanceof DropDown)
+                .forEach(dd -> ((DropDown) dd).setChangeListener(estado -> sk.ddChanged((DropDown) dd)));
+        controles
+                .values()
+                .stream()
+                .filter(c -> c instanceof NumericField)
+                .forEach(nf -> ((NumericField) nf).setChangeListener(text -> sk.nfChanged((NumericField) nf)));
         controles
                 .values()
                 .stream()
@@ -77,57 +81,81 @@ public class TemplateSketchConfig {
         controles
                 .values()
                 .stream()
+                .filter(c -> c instanceof Slider)
+                .forEach(sld -> ((Slider) sld).setChangeListener(valor -> sk.sldChanged(sld.getCode(), valor)));
+        controles
+                .values()
+                .stream()
                 .filter(c -> c instanceof TextField)
                 .forEach(tf -> ((TextField) tf).setChangeListener(text -> sk.tfChanged(tf.getCode(), text)));
+        controles
+                .values()
+                .stream()
+                .filter(c -> c instanceof Toggle)
+                .forEach(tgl -> ((Toggle) tgl).setChangeListener(estado -> sk.tglClicked(tgl.getCode(), estado)));
         return controles;
     }
 
-    public static Map<String, Button> filtrarBotones(Map<String, Control> controles) {
+    public static Map<String, Button> filterButtons(Map<String, Control> controles) {
         if (controles == null) return null;
         Map<String, Button> botones = new HashMap<>();
         controles.values().stream().filter(c -> c instanceof Button).forEach(btn -> botones.put(btn.getCode(), (Button) btn));
         return botones;
     }
 
-    public static Map<String, Label> filtrarLabels(Map<String, Control> controles) {
-        if (controles == null) return null;
-        Map<String, Label> labels = new HashMap<>();
-        controles.values().stream().filter(c -> c instanceof Label).forEach(lbl -> labels.put(lbl.getCode(), (Label) lbl));
-        return labels;
-    }
-
-    public static Map<String, Slider> filtrarSliders(Map<String, Control> controles) {
-        if (controles == null) return null;
-        Map<String, Slider> sliders = new HashMap<>();
-        controles.values().stream().filter(c -> c instanceof Slider).forEach(sld -> sliders.put(sld.getCode(), (Slider) sld));
-        return sliders;
-    }
-
-    public static Map<String, Toggle> filtrarToggles(Map<String, Control> controles) {
-        if (controles == null) return null;
-        Map<String, Toggle> toggles = new HashMap<>();
-        controles.values().stream().filter(c -> c instanceof Toggle).forEach(tgl -> toggles.put(tgl.getCode(), (Toggle) tgl));
-        return toggles;
-    }
-
-    public static Map<String, Checkbox> filtrarCheckboxes(Map<String, Control> controles) {
+    public static Map<String, Checkbox> filterCheckboxes(Map<String, Control> controles) {
         if (controles == null) return null;
         Map<String, Checkbox> checkboxes = new HashMap<>();
         controles.values().stream().filter(c -> c instanceof Checkbox).forEach(chk -> checkboxes.put(chk.getCode(), (Checkbox) chk));
         return checkboxes;
     }
 
-    public static Map<String, RadioGroup> filtrarRadiogroups(Map<String, Control> controles) {
+    public static Map<String, DropDown> filterDropdowns(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, DropDown> dropdowns = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof DropDown).forEach(dd -> dropdowns.put(dd.getCode(), (DropDown) dd));
+        return dropdowns;
+    }
+
+    public static Map<String, Label> filterLabels(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, Label> labels = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof Label).forEach(lbl -> labels.put(lbl.getCode(), (Label) lbl));
+        return labels;
+    }
+
+    public static Map<String, NumericField> filterNumericfields(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, NumericField> textfields = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof NumericField).forEach(nf -> textfields.put(nf.getCode(), (NumericField) nf));
+        return textfields;
+    }
+
+    public static Map<String, RadioGroup> filterRadiogroups(Map<String, Control> controles) {
         if (controles == null) return null;
         Map<String, RadioGroup> radiogroups = new HashMap<>();
         controles.values().stream().filter(c -> c instanceof RadioGroup).forEach(rg -> radiogroups.put(rg.getCode(), (RadioGroup) rg));
         return radiogroups;
     }
 
-    public static Map<String, TextField> filtrarTextfields(Map<String, Control> controles) {
+    public static Map<String, Slider> filterSliders(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, Slider> sliders = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof Slider).forEach(sld -> sliders.put(sld.getCode(), (Slider) sld));
+        return sliders;
+    }
+
+    public static Map<String, TextField> filterTextfields(Map<String, Control> controles) {
         if (controles == null) return null;
         Map<String, TextField> textfields = new HashMap<>();
         controles.values().stream().filter(c -> c instanceof TextField).forEach(tf -> textfields.put(tf.getCode(), (TextField) tf));
         return textfields;
+    }
+
+    public static Map<String, Toggle> filterToggles(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, Toggle> toggles = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof Toggle).forEach(tgl -> toggles.put(tgl.getCode(), (Toggle) tgl));
+        return toggles;
     }
 }

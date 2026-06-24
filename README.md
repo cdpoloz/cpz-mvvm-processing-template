@@ -341,6 +341,9 @@ another framework.
 
 `cpz-mvvm-processing-template` is released under the Apache License, Version 2.0. See [LICENSE](LICENSE).
 
+The template include JetBrains Mono, distributed under the SIL Open Font
+License 1.1. See [OFL](data/font/OFL.txt).
+
 ---
 
 ## Author

@@ -32,17 +32,17 @@
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
-            <version>${processing.version}</version>
+            <version>4.5.2</version>
         </dependency>
         <dependency>
-            <groupId>com.cpz</groupId>
+            <groupId>io.github.cdpoloz</groupId>
             <artifactId>cpz-mvvm-processing-controls</artifactId>
-            <version>${cpz-mvvm-processing-controls.version}</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
-            <groupId>com.cpz</groupId>
+            <groupId>io.github.cdpoloz</groupId>
             <artifactId>cpz-utils</artifactId>
-            <version>${cpz-utils.version}</version>
+            <version>0.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
