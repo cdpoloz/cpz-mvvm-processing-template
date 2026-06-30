@@ -16,7 +16,7 @@ import com.cpz.processing.controls.core.overlay.OverlayManager;
 import com.cpz.processing.controls.core.overlay.tooltip.TooltipArea;
 import com.cpz.processing.controls.core.overlay.tooltip.TooltipFactory;
 import com.cpz.processing.controls.core.overlay.tooltip.util.TooltipOverlayController;
-import com.cpz.processing.template.main.TemplateSketch;
+import com.cpz.processing.template.main.TestSketch;
 import processing.core.PApplet;
 import processing.opengl.PJOGL;
 
@@ -24,37 +24,36 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.cpz.processing.template.main.Launcher.LOG;
-import static com.cpz.processing.template.main.Launcher.PROPS;
+import static com.cpz.processing.template.main.TestLauncher.LOG;
 import static processing.core.PConstants.P2D;
 
 /**
  * @author CPZ
  */
-public class TemplateSketchConfig {
+public class TestSketchConfig {
 
     public static void settings(PApplet sk) {
         if (sk == null) return;
         LOG.info("Starting settings");
-        PJOGL.setIcon("data" + File.separator + "img" + File.separator + PROPS.getProperty("window.icon"));
+        PJOGL.setIcon("data" + File.separator + "img" + File.separator + "windowIcon.png");
         // tamaño de ventana
-        sk.size(Integer.parseInt(PROPS.getProperty("sketch.width")), Integer.parseInt(PROPS.getProperty("sketch.height")), P2D);
+        sk.size(1500, 500, P2D);
         // smoothing
-        sk.smooth(Integer.parseInt(PROPS.getProperty("sketch.smoothing")));
+        sk.smooth(8);
         LOG.info("Finished settings");
     }
 
     public static void initialSetup(PApplet sk) {
         if (sk == null) return;
         LOG.info("Starting initial setup");
-        sk.frameRate(Integer.parseInt(PROPS.getProperty("sketch.fps")));
-        sk.getSurface().setTitle(PROPS.getProperty("window.title"));
+        sk.frameRate(60);
+        sk.getSurface().setTitle("CPZ- MVVM TEST");
         LOG.info("Finished initial setup");
     }
 
-    public static Map<String, Control> setupControls(TemplateSketch sk, OverlayManager overlayManager, InputManager inputManager) {
+    public static Map<String, Control> setupControls(TestSketch sk, OverlayManager overlayManager, InputManager inputManager) {
         if (sk == null || overlayManager == null || inputManager == null) return null;
-        String templateConfigPath = "data" + File.separator + "config" + File.separator + "template-sketch.json";
+        String templateConfigPath = "data" + File.separator + "config" + File.separator + "test-sketch.json";
         ControlConfigLoader loader = new ControlConfigLoader(sk, overlayManager, inputManager);
         Map<String, Control> controles = loader.load(templateConfigPath);
         controles
@@ -163,7 +162,7 @@ public class TemplateSketchConfig {
         return toggles;
     }
 
-    public static TooltipOverlayController setupTooltips(TemplateSketch sk, OverlayManager overlayManager, Map<String, Control> controls) {
+    public static TooltipOverlayController setupTooltips(TestSketch sk, OverlayManager overlayManager, Map<String, Control> controls) {
         if (sk == null) return null;
         TooltipOverlayController tooltips = new TooltipOverlayController(sk, overlayManager);
         // custom area tooltips
