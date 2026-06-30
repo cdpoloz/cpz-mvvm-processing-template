@@ -116,6 +116,26 @@
       }
     },
     {
+      "type": "label",
+      "code": "lblCustomArea",
+      "text": "Custom tooltip area",
+      "x": 750.0,
+      "y": 394.0,
+      "width": 200.0,
+      "height": 100.0,
+      "enabled": true,
+      "visible": true,
+      "style": {
+        "textSize": 12.0,
+        "font": "data/font/JetBrainsMono.ttf",
+        "textColor": "#EAF4FF",
+        "lineSpacingMultiplier": 1.0,
+        "alignX": "center",
+        "alignY": "top",
+        "disabledAlpha": 80
+      }
+    },
+    {
       "type": "numericfield",
       "code": "nfTemplate",
       "text": "12.5",
