@@ -88,8 +88,8 @@ public class TemplateSketch extends PApplet {
 
     public void draw() {
         background(32);
-        controls.values().forEach(Control::draw);
         drawCustomTooltipArea();
+        controls.values().forEach(Control::draw);
         /*
          ***** the final object to be drawn is the OverlayManager so the
          ***** DropdDown and Tooltip objects could be seen on top of everything else
@@ -99,18 +99,15 @@ public class TemplateSketch extends PApplet {
 
     private void drawCustomTooltipArea() {
         pushStyle();
-        rectMode(CORNER);
+        rectMode(CENTER);
         stroke(86, 142, 203);
         strokeWeight(2.0f);
         fill(42, 54, 66);
-        float x = 750;
-        float y = 350;
+        float x = 850;
+        float y = 400;
         float w = 200;
         float h = 100;
         rect(x, y, w, h, 8.0f);
-        fill(220, 232, 245);
-        textAlign(CENTER, CENTER);
-        text("Custom tooltip area", x + w * 0.5f, y + h * 0.5f);
         popStyle();
     }
 
