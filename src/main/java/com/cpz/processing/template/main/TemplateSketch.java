@@ -13,6 +13,10 @@ import com.cpz.processing.controls.controls.toggle.Toggle;
 import com.cpz.processing.controls.core.input.InputManager;
 import com.cpz.processing.controls.core.input.PointerEvent;
 import com.cpz.processing.controls.core.overlay.OverlayManager;
+import com.cpz.processing.controls.core.overlay.tooltip.TooltipArea;
+import com.cpz.processing.controls.core.overlay.tooltip.TooltipFactory;
+import com.cpz.processing.controls.core.overlay.tooltip.input.TooltipInputLayer;
+import com.cpz.processing.controls.core.overlay.tooltip.util.TooltipOverlayController;
 import com.cpz.processing.controls.input.KeyboardState;
 import com.cpz.processing.controls.input.ProcessingKeyboardAdapter;
 import com.cpz.processing.template.config.TemplateSketchConfig;
@@ -30,9 +34,10 @@ public class TemplateSketch extends PApplet {
 
     private InputManager inputManager;
     private OverlayManager overlayManager;
+    private TooltipOverlayController tooltips;
     private ProcessingKeyboardAdapter processingKeyboardAdapter;
     private Map<String, Control> controls;
-    private Map<String, Button> botones;
+    private Map<String, Button> buttons;
     private Map<String, Checkbox> checkboxes;
     private Map<String, DropDown> dropdowns;
     private Map<String, Label> labels;
@@ -41,7 +46,6 @@ public class TemplateSketch extends PApplet {
     private Map<String, Slider> sliders;
     private Map<String, TextField> textfields;
     private Map<String, Toggle> toggles;
-
 
     public void settings() {
         TemplateSketchConfig.settings(this);
@@ -54,7 +58,7 @@ public class TemplateSketch extends PApplet {
         overlayManager = new OverlayManager();
         // controles
         controls = TemplateSketchConfig.setupControls(this, overlayManager, inputManager);
-        botones = TemplateSketchConfig.filterButtons(controls);
+        buttons = TemplateSketchConfig.filterButtons(controls);
         checkboxes = TemplateSketchConfig.filterCheckboxes(controls);
         dropdowns = TemplateSketchConfig.filterDropdowns(controls);
         labels = TemplateSketchConfig.filterLabels(controls);
@@ -63,9 +67,11 @@ public class TemplateSketch extends PApplet {
         sliders = TemplateSketchConfig.filterSliders(controls);
         textfields = TemplateSketchConfig.filterTextfields(controls);
         toggles = TemplateSketchConfig.filterToggles(controls);
+        // tooltips
+        tooltips = TemplateSketchConfig.setupTooltips(this, overlayManager, controls);
         // main input layer
         MainInputLayer mainInputLayer = new MainInputLayer(0);
-        botones.values().forEach(btn -> mainInputLayer.addPointerTarget(btn::handlePointerEvent));
+        buttons.values().forEach(btn -> mainInputLayer.addPointerTarget(btn::handlePointerEvent));
         checkboxes.values().forEach(chk -> mainInputLayer.addPointerTarget(chk::handlePointerEvent));
         dropdowns.values().forEach(dd -> mainInputLayer.addPointerTarget(dd::handlePointerEvent));
         numericfields.values().forEach(nf -> mainInputLayer.addPointerTarget(nf::handlePointerEvent));
@@ -77,6 +83,7 @@ public class TemplateSketch extends PApplet {
         textfields.values().forEach(tf -> mainInputLayer.addKeyboardTarget(tf::handleKeyboardEvent));
         toggles.values().forEach(tgl -> mainInputLayer.addPointerTarget(tgl::handlePointerEvent));
         inputManager.registerLayer(mainInputLayer);
+        inputManager.registerLayer(new TooltipInputLayer(1000, tooltips));
         KeyboardState keyboardState = new KeyboardState();
         processingKeyboardAdapter = new ProcessingKeyboardAdapter(keyboardState, inputManager);
     }
@@ -84,11 +91,29 @@ public class TemplateSketch extends PApplet {
     public void draw() {
         background(32);
         controls.values().forEach(Control::draw);
+        drawCustomTooltipArea();
         /*
          ***** the final object to be drawn is the OverlayManager so the
-         ***** DropdDown objects could be seen on top of everything else
+         ***** DropdDown and Tooltip objects could be seen on top of everything else
          */
         overlayManager.getActiveOverlays().forEach(entry -> entry.getRender().run());
+    }
+
+    private void drawCustomTooltipArea() {
+        pushStyle();
+        rectMode(CORNER);
+        stroke(86, 142, 203);
+        strokeWeight(2.0f);
+        fill(42, 54, 66);
+        float x = 750;
+        float y = 350;
+        float w = 200;
+        float h = 100;
+        rect(x, y, w, h, 8.0f);
+        fill(220, 232, 245);
+        textAlign(CENTER, CENTER);
+        text("Custom tooltip area", x + w * 0.5f, y + h * 0.5f);
+        popStyle();
     }
 
     // <editor-fold defaultstate="collapsed" desc="*** control events ***">
@@ -170,6 +195,14 @@ public class TemplateSketch extends PApplet {
 
     public void keyTyped() {
         processingKeyboardAdapter.keyTyped(key, keyCode);
+    }
+    // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="*** exit ***">
+    public void exit() {
+        if (dropdowns != null) dropdowns.values().forEach(DropDown::dispose);
+        if (tooltips != null) tooltips.dispose();
+        if (overlayManager != null) overlayManager.clearAll();
+        super.exit();
     }
     // </editor-fold>
 }

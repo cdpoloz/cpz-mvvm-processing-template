@@ -13,6 +13,9 @@ import com.cpz.processing.controls.controls.textfield.TextField;
 import com.cpz.processing.controls.controls.toggle.Toggle;
 import com.cpz.processing.controls.core.input.InputManager;
 import com.cpz.processing.controls.core.overlay.OverlayManager;
+import com.cpz.processing.controls.core.overlay.tooltip.TooltipArea;
+import com.cpz.processing.controls.core.overlay.tooltip.TooltipFactory;
+import com.cpz.processing.controls.core.overlay.tooltip.util.TooltipOverlayController;
 import com.cpz.processing.template.main.TemplateSketch;
 import processing.opengl.PJOGL;
 
@@ -157,5 +160,18 @@ public class TemplateSketchConfig {
         Map<String, Toggle> toggles = new HashMap<>();
         controles.values().stream().filter(c -> c instanceof Toggle).forEach(tgl -> toggles.put(tgl.getCode(), (Toggle) tgl));
         return toggles;
+    }
+
+    public static TooltipOverlayController setupTooltips(TemplateSketch sk, OverlayManager overlayManager, Map<String, Control> controls) {
+        if (sk == null) return null;
+        TooltipOverlayController tooltips = new TooltipOverlayController(sk, overlayManager);
+        // custom area tooltips
+        TooltipArea customTooltipArea = new TooltipArea(750, 350.0f, 200.0f, 100.0f)
+                .setTooltip(TooltipFactory.loadFromJson(sk, "data/config/custom-area-tooltip.json"));
+        tooltips.registerTarget(customTooltipArea);
+        // tooltips over Control objects (examples)
+        tooltips.registerTarget((Button) controls.get("btnTemplate"));
+        tooltips.registerTarget((Slider) controls.get("sldTemplate"));
+        return tooltips;
     }
 }

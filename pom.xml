@@ -15,8 +15,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <processing.version>4.5.2</processing.version>
-        <cpz-utils.version>0.2.2</cpz-utils.version>
-        <cpz-mvvm-processing-controls.version>0.3.1</cpz-mvvm-processing-controls.version>
+        <cpz-utils.version>0.2.3</cpz-utils.version>
+        <cpz-mvvm-processing-controls.version>0.5.0</cpz-mvvm-processing-controls.version>
         <jetbrains-annotations.version>26.0.2</jetbrains-annotations.version>
     </properties>
 
@@ -32,17 +32,17 @@
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
-            <version>4.5.2</version>
+            <version>${processing.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.cdpoloz</groupId>
             <artifactId>cpz-mvvm-processing-controls</artifactId>
-            <version>0.4.0</version>
+            <version>${cpz-mvvm-processing-controls.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.cdpoloz</groupId>
             <artifactId>cpz-utils</artifactId>
-            <version>0.2.3</version>
+            <version>${cpz-utils.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
