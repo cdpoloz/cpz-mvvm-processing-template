@@ -91,8 +91,9 @@ public class TemplateSketch extends PApplet {
         drawCustomTooltipArea();
         controls.values().forEach(Control::draw);
         /*
-         ***** the final object to be drawn is the OverlayManager so the
-         ***** DropdDown and Tooltip objects could be seen on top of everything else
+         ***** the final object to be drawn is the OverlayManager
+         ***** so the DropdDown and Tooltip objects could be seen
+         ***** on top of everything else
          */
         overlayManager.getActiveOverlays().forEach(entry -> entry.getRender().run());
     }
