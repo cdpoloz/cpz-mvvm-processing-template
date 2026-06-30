@@ -13,8 +13,6 @@ import com.cpz.processing.controls.controls.toggle.Toggle;
 import com.cpz.processing.controls.core.input.InputManager;
 import com.cpz.processing.controls.core.input.PointerEvent;
 import com.cpz.processing.controls.core.overlay.OverlayManager;
-import com.cpz.processing.controls.core.overlay.tooltip.TooltipArea;
-import com.cpz.processing.controls.core.overlay.tooltip.TooltipFactory;
 import com.cpz.processing.controls.core.overlay.tooltip.input.TooltipInputLayer;
 import com.cpz.processing.controls.core.overlay.tooltip.util.TooltipOverlayController;
 import com.cpz.processing.controls.input.KeyboardState;
