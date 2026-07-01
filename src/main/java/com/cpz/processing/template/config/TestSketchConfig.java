@@ -171,7 +171,7 @@ public class TestSketchConfig {
         tooltips.registerTarget(customTooltipArea);
         // tooltips over Control objects (examples)
         tooltips.registerTarget((Button) controls.get("btnTemplate"));
-        tooltips.registerTarget((Slider) controls.get("sldTemplate"));
+        tooltips.registerTarget((Slider) controls.get("sldRadioMaxIni"));
         return tooltips;
     }
 }

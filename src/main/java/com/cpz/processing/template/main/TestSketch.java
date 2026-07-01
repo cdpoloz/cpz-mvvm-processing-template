@@ -19,6 +19,7 @@ import com.cpz.processing.controls.input.KeyboardState;
 import com.cpz.processing.controls.input.ProcessingKeyboardAdapter;
 import com.cpz.processing.template.config.TestSketchConfig;
 import com.cpz.processing.template.input.MainInputLayer;
+import com.cpz.processing.template.ui.MovilRadial;
 import com.cpz.utils.noise.NoiseSource;
 import com.cpz.utils.noise.NoiseValue;
 import com.cpz.utils.noise.PerlinNoise;
@@ -51,10 +52,10 @@ public class TestSketch extends PApplet {
     private Map<String, TextField> textfields;
     private Map<String, Toggle> toggles;
 
-    private NoiseValue noise;
-    private List<Float> lstF;
-    private float da, r, rMax, dr;
-    private List<PVector> lstP;
+    private NoiseSource perlin;
+    private List<MovilRadial> lstMovilesRadiales;
+    private float radioMaxIni, radioMinIni;
+    private PVector pIni;
 
     public void settings() {
         TestSketchConfig.settings(this);
@@ -96,109 +97,152 @@ public class TestSketch extends PApplet {
         KeyboardState keyboardState = new KeyboardState();
         processingKeyboardAdapter = new ProcessingKeyboardAdapter(keyboardState, inputManager);
         // test
-        NoiseSource perlin = new PerlinNoise(1234L);
-        noise = new NoiseValue(perlin, random(1000), 0.001f);
-        da = 1;
-        rMax = 200;
-        dr = 1;
-        lstF = new ArrayList<>();
-        int n = (int) (360 / da);
-        for (int i = 0; i < n; i++) {
-            noise.update();
-            lstF.add(noise.get());
+        perlin = new PerlinNoise(1234L);
+        pIni = new PVector(width * 0.5f, height * 0.5f);
+        lstMovilesRadiales = new ArrayList<>();
+        radioMinIni = 0;
+        radioMaxIni = 50;
+        float velocidad = 0.05f;
+        float dRadioMin = 0.5f;
+        float dRadioMax = 2f;
+        float da = 4f;
+        int cantidad = (int) (360 / da);
+        for (int i = 0; i < cantidad; i++) {
+            MovilRadial mr = new MovilRadial();
+            mr.setPosicionInicial(pIni.x, pIni.y);
+            mr.setAngulo((float) Math.toRadians(i * da));
+            mr.setNoise(new NoiseValue(perlin, random(1000), velocidad));
+            mr.setRadioMinIni(radioMinIni);
+            mr.setRadioMin(radioMinIni);
+            mr.setRadioMaxIni(radioMaxIni);
+            mr.setRadioMax(radioMaxIni);
+            mr.setDeltaRadioMin(dRadioMin);
+            mr.setDeltaRadioMax(dRadioMax);
+            mr.setUpdateRangoRadio(checkboxes.get("chkUpdateRangoRadio").isChecked());
+            lstMovilesRadiales.add(mr);
         }
-        System.out.println("lstF.size() = " + lstF.size());
-        lstP = new ArrayList<>();
+        sliders.get("sldRadioMaxIni").setValue(new BigDecimal(radioMaxIni));
+        sliders.get("sldDeltaAngulo").setValue(new BigDecimal(da));
+        labels.get("lblRadioMaxIni").setText("RadioMaxIni\n" + String.format("%.0f", radioMaxIni));
+        labels.get("lblVelocidad").setText("Velocidad\n" + String.format("%.3f", velocidad));
+        labels.get("lblDeltaRadioMin").setText("dRadioMin\n" + String.format("%.2f", dRadioMin));
+        labels.get("lblDeltaRadioMax").setText("dRadioMax\n" + String.format("%.2f", dRadioMax));
+        labels.get("lblDeltaAngulo").setText("dAngulo\n" + String.format("%.1f", da));
     }
 
     public void draw() {
         background(32);
-
-        noise.update();
-        lstF.remove(0);
-        //lstF.removeFirst();
-        lstF.add(noise.get());
-        r += dr;
-        if (r > rMax) r = 0;
-        lstP.clear();
-        for (int i = 0; i < lstF.size(); i++) {
-            float a = radians(i * da);
-            float mag = r * lstF.get(i);
-            PVector p = new PVector(mag * cos(a) + width * 0.5f, mag * sin(a) + height * 0.5f);
-            lstP.add(p);
+        lstMovilesRadiales.forEach(MovilRadial::update);
+        int cantidadFuera = 0;
+        boolean todosFuera = true;
+        for (MovilRadial mr : lstMovilesRadiales) {
+            todosFuera = todosFuera && mr.isFueraRadioMaxIni();
+            if (mr.isFueraRadioMaxIni()) cantidadFuera++;
         }
-        stroke(255);
-        for (int i = 1; i < lstP.size(); i++) {
-            PVector prev = lstP.get(i - 1);
-            PVector p = lstP.get(i);
-            line(prev.x, prev.y, p.x, p.y);
+        if (todosFuera) lstMovilesRadiales.forEach(MovilRadial::reset);
+        float f = map(cantidadFuera, 0, lstMovilesRadiales.size(), 1, 0);
+        int c = color(255, 0, 255, f * 255);
+        stroke(c);
+        strokeWeight(0.5f);
+        for (int i = 1; i < lstMovilesRadiales.size(); i++) {
+            PVector pp = lstMovilesRadiales.get(i - 1).getPosicion();
+            PVector p = lstMovilesRadiales.get(i).getPosicion();
+            line(pp.x, pp.y, p.x, p.y);
         }
-        PVector p1 = lstP.get(0);
-        PVector p2 = lstP.get(lstP.size() - 1);
-        line(p1.x, p1.y, p2.x, p2.y);
-
-        /*
-        drawCustomTooltipArea();
+        PVector pp = lstMovilesRadiales.getFirst().getPosicion();
+        PVector p = lstMovilesRadiales.getLast().getPosicion();
+        line(pp.x, pp.y, p.x, p.y);
+        // controles
         controls.values().forEach(Control::draw);
         overlayManager.getActiveOverlays().forEach(entry -> entry.getRender().run());
-        */
-    }
-
-    private void drawCustomTooltipArea() {
-        pushStyle();
-        rectMode(CENTER);
-        stroke(86, 142, 203);
-        strokeWeight(2.0f);
-        fill(42, 54, 66);
-        float x = 850;
-        float y = 400;
-        float w = 200;
-        float h = 100;
-        rect(x, y, w, h, 8.0f);
-        popStyle();
     }
 
     // <editor-fold defaultstate="collapsed" desc="*** control events ***">
     public void btnClicked(String code) {
         if (code == null) return;
-        labels.get("lblTemplate").setText("btnClicked: " + code);
     }
 
     public void chkClicked(String code, boolean status) {
         if (code == null) return;
-        labels.get("lblTemplate").setText("chkClicked: " + code + ".state = " + (status ? "1" : "0"));
+        if (code.equals("chkUpdateRangoRadio")) {
+            lstMovilesRadiales.forEach(mr -> mr.setUpdateRangoRadio(status));
+            if (!status) lstMovilesRadiales.forEach(MovilRadial::reset);
+        }
     }
 
     public void ddChanged(DropDown dd) {
         if (dd == null) return;
-        labels.get("lblTemplate").setText("ddChanged: " + dd.getCode() + ".value = " + dd.getSelectedItem());
     }
 
     public void nfChanged(NumericField nf) {
         if (nf == null) return;
-        labels.get("lblTemplate").setText("nfChanged: " + nf.getCode() + ".value = " + nf.getValue());
     }
 
     public void rgClicked(RadioGroup rg) {
         if (rg == null) return;
-        String s = "rgClicked: " + rg.getCode() + ".selection = ";
-        s += rg.getSelectedOption().isEmpty() ? rg.getSelectedIndex() : rg.getSelectedOption();
-        labels.get("lblTemplate").setText(s);
     }
 
     public void sldChanged(String code, BigDecimal value) {
         if (code == null || value == null) return;
-        labels.get("lblTemplate").setText("sldChanged: " + code + ".value = " + value);
+        switch (code) {
+            case "sldRadioMaxIni" -> {
+                lstMovilesRadiales.forEach(mr -> {
+                    mr.setRadioMaxIni(value.floatValue());
+                    mr.reset();
+                });
+                labels.get(code.replace("sld", "lbl")).setText("RadioMaxIni\n" + String.format("%.0f", value));
+            }
+            case "sldVelocidad" -> {
+                labels.get(code.replace("sld", "lbl")).setText("Velocidad\n" + String.format("%.3f", value));
+                lstMovilesRadiales.forEach(mr -> mr.setNoise(new NoiseValue(perlin, random(1000), value.floatValue())));
+            }
+            case "sldDeltaRadioMin" -> {
+                labels.get(code.replace("sld", "lbl")).setText("dRadioMin\n" + String.format("%.2f", value));
+                lstMovilesRadiales.forEach(mr -> {
+                    mr.setDeltaRadioMin(value.floatValue());
+                    mr.reset();
+                });
+            }
+            case "sldDeltaRadioMax" -> {
+                labels.get(code.replace("sld", "lbl")).setText("dRadioMax\n" + String.format("%.2f", value));
+                lstMovilesRadiales.forEach(mr -> {
+                    mr.setDeltaRadioMax(value.floatValue());
+                    mr.reset();
+                });
+            }
+            case "sldDeltaAngulo" -> {
+                labels.get(code.replace("sld", "lbl")).setText("dAngulo\n" + String.format("%.2f", value));
+                lstMovilesRadiales.clear();
+                float da = value.floatValue();
+                float velocidad = sliders.get("sldVelocidad").getValue().floatValue();
+                float dRadioMin = sliders.get("sldDeltaRadioMin").getValue().floatValue();
+                float dRadioMax = sliders.get("sldDeltaRadioMax").getValue().floatValue();
+                radioMaxIni = sliders.get("sldRadioMaxIni").getValue().floatValue();
+                int cantidad = (int) (360 / da);
+                for (int i = 0; i < cantidad; i++) {
+                    MovilRadial mr = new MovilRadial();
+                    mr.setPosicionInicial(pIni.x, pIni.y);
+                    mr.setAngulo((float) Math.toRadians(i * da));
+                    mr.setNoise(new NoiseValue(perlin, random(1000), velocidad));
+                    mr.setRadioMinIni(radioMinIni);
+                    mr.setRadioMin(radioMinIni);
+                    mr.setRadioMaxIni(radioMaxIni);
+                    mr.setRadioMax(radioMaxIni);
+                    mr.setDeltaRadioMin(dRadioMin);
+                    mr.setDeltaRadioMax(dRadioMax);
+                    mr.setUpdateRangoRadio(checkboxes.get("chkUpdateRangoRadio").isChecked());
+                    lstMovilesRadiales.add(mr);
+                }
+            }
+        }
     }
 
     public void tfChanged(String code, String text) {
         if (code == null) return;
-        labels.get("lblTemplate").setText("tfChanged: " + code + " = " + text);
     }
 
     public void tglClicked(String code, int status) {
         if (code == null) return;
-        labels.get("lblTemplate").setText("tglClicked: " + code + ".state = " + status);
     }
 
     // </editor-fold>
@@ -228,6 +272,7 @@ public class TestSketch extends PApplet {
     // <editor-fold defaultstate="collapsed" desc="*** keyboard events ***">
     public void keyPressed() {
         if (key == ESC) key = 0;
+        else if (keyCode == 32) checkboxes.get("chkUpdateRangoRadio").setChecked(!checkboxes.get("chkUpdateRangoRadio").isChecked());
         processingKeyboardAdapter.keyPressed(key, keyCode);
     }
 
