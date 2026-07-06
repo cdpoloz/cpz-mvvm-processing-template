@@ -96,6 +96,26 @@
       }
     },
     {
+      "type": "indicator",
+      "code": "indTemplate",
+      "x": 1370.0,
+      "y": 280.0,
+      "width": 40.0,
+      "height": 40.0,
+      "on": false,
+      "onColor": "#3062DB",
+      "offColor": "#464646",
+      "style": {
+        "strokeColor": "#FFFFFF",
+        "strokeWeight": 1.0
+      },
+      "tooltip": {
+        "text": "Shows if DropDown is expanded",
+        "enabled": true,
+        "styleRef": "dark"
+      }
+    },
+    {
       "type": "label",
       "code": "lblTemplate",
       "text": "lblTemplate",

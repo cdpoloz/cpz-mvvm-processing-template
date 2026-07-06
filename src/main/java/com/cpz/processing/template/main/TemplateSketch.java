@@ -4,6 +4,7 @@ import com.cpz.processing.controls.controls.Control;
 import com.cpz.processing.controls.controls.button.Button;
 import com.cpz.processing.controls.controls.checkbox.Checkbox;
 import com.cpz.processing.controls.controls.dropdown.DropDown;
+import com.cpz.processing.controls.controls.indicator.Indicator;
 import com.cpz.processing.controls.controls.label.Label;
 import com.cpz.processing.controls.controls.numericfield.NumericField;
 import com.cpz.processing.controls.controls.radiogroup.RadioGroup;
@@ -38,6 +39,7 @@ public class TemplateSketch extends PApplet {
     private Map<String, Button> buttons;
     private Map<String, Checkbox> checkboxes;
     private Map<String, DropDown> dropdowns;
+    private Map<String, Indicator> indicators;
     private Map<String, Label> labels;
     private Map<String, NumericField> numericfields;
     private Map<String, RadioGroup> radiogroups;
@@ -59,6 +61,7 @@ public class TemplateSketch extends PApplet {
         buttons = TemplateSketchConfig.filterButtons(controls);
         checkboxes = TemplateSketchConfig.filterCheckboxes(controls);
         dropdowns = TemplateSketchConfig.filterDropdowns(controls);
+        indicators = TemplateSketchConfig.filterIndicators(controls);
         labels = TemplateSketchConfig.filterLabels(controls);
         numericfields = TemplateSketchConfig.filterNumericfields(controls);
         radiogroups = TemplateSketchConfig.filterRadiogroups(controls);
@@ -87,6 +90,9 @@ public class TemplateSketch extends PApplet {
     }
 
     public void draw() {
+        // update
+        updateIndicatorStatus();
+        // draw
         background(32);
         drawCustomTooltipArea();
         controls.values().forEach(Control::draw);
@@ -96,6 +102,10 @@ public class TemplateSketch extends PApplet {
          ***** on top of everything else
          */
         overlayManager.getActiveOverlays().forEach(entry -> entry.getRender().run());
+    }
+
+    private void updateIndicatorStatus() {
+        indicators.get("indTemplate").setOn(dropdowns.get("ddTemplate").isExpanded());
     }
 
     private void drawCustomTooltipArea() {

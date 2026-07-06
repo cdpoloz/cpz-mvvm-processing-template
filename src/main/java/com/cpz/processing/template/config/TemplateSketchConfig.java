@@ -5,6 +5,7 @@ import com.cpz.processing.controls.controls.button.Button;
 import com.cpz.processing.controls.controls.checkbox.Checkbox;
 import com.cpz.processing.controls.controls.config.ControlConfigLoader;
 import com.cpz.processing.controls.controls.dropdown.DropDown;
+import com.cpz.processing.controls.controls.indicator.Indicator;
 import com.cpz.processing.controls.controls.label.Label;
 import com.cpz.processing.controls.controls.numericfield.NumericField;
 import com.cpz.processing.controls.controls.radiogroup.RadioGroup;
@@ -120,6 +121,13 @@ public class TemplateSketchConfig {
         return dropdowns;
     }
 
+    public static Map<String, Indicator> filterIndicators(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, Indicator> indicators = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof Indicator).forEach(ind -> indicators.put(ind.getCode(), (Indicator) ind));
+        return indicators;
+    }
+
     public static Map<String, Label> filterLabels(Map<String, Control> controles) {
         if (controles == null) return null;
         Map<String, Label> labels = new HashMap<>();
@@ -172,6 +180,7 @@ public class TemplateSketchConfig {
         // tooltips over Control objects (examples)
         tooltips.registerTarget((Button) controls.get("btnTemplate"));
         tooltips.registerTarget((Slider) controls.get("sldTemplate"));
+        tooltips.registerTarget((Indicator) controls.get("indTemplate"));
         return tooltips;
     }
 }
