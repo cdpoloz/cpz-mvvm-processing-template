@@ -8,6 +8,7 @@ import com.cpz.processing.controls.controls.dropdown.DropDown;
 import com.cpz.processing.controls.controls.indicator.Indicator;
 import com.cpz.processing.controls.controls.label.Label;
 import com.cpz.processing.controls.controls.numericfield.NumericField;
+import com.cpz.processing.controls.controls.progressbar.ProgressBar;
 import com.cpz.processing.controls.controls.radiogroup.RadioGroup;
 import com.cpz.processing.controls.controls.slider.Slider;
 import com.cpz.processing.controls.controls.textfield.TextField;
@@ -137,9 +138,16 @@ public class TemplateSketchConfig {
 
     public static Map<String, NumericField> filterNumericfields(Map<String, Control> controles) {
         if (controles == null) return null;
-        Map<String, NumericField> textfields = new HashMap<>();
-        controles.values().stream().filter(c -> c instanceof NumericField).forEach(nf -> textfields.put(nf.getCode(), (NumericField) nf));
-        return textfields;
+        Map<String, NumericField> numericfields = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof NumericField).forEach(nf -> numericfields.put(nf.getCode(), (NumericField) nf));
+        return numericfields;
+    }
+
+    public static Map<String, ProgressBar> filterProgressbars(Map<String, Control> controles) {
+        if (controles == null) return null;
+        Map<String, ProgressBar> progressbars = new HashMap<>();
+        controles.values().stream().filter(c -> c instanceof ProgressBar).forEach(pb -> progressbars.put(pb.getCode(), (ProgressBar) pb));
+        return progressbars;
     }
 
     public static Map<String, RadioGroup> filterRadiogroups(Map<String, Control> controles) {
@@ -181,6 +189,7 @@ public class TemplateSketchConfig {
         tooltips.registerTarget((Button) controls.get("btnTemplate"));
         tooltips.registerTarget((Slider) controls.get("sldTemplate"));
         tooltips.registerTarget((Indicator) controls.get("indTemplate"));
+        tooltips.registerTarget((ProgressBar) controls.get("pbTemplate"));
         return tooltips;
     }
 }

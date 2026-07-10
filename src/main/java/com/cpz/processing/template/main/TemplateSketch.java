@@ -7,6 +7,7 @@ import com.cpz.processing.controls.controls.dropdown.DropDown;
 import com.cpz.processing.controls.controls.indicator.Indicator;
 import com.cpz.processing.controls.controls.label.Label;
 import com.cpz.processing.controls.controls.numericfield.NumericField;
+import com.cpz.processing.controls.controls.progressbar.ProgressBar;
 import com.cpz.processing.controls.controls.radiogroup.RadioGroup;
 import com.cpz.processing.controls.controls.slider.Slider;
 import com.cpz.processing.controls.controls.textfield.TextField;
@@ -14,6 +15,8 @@ import com.cpz.processing.controls.controls.toggle.Toggle;
 import com.cpz.processing.controls.core.input.InputManager;
 import com.cpz.processing.controls.core.input.PointerEvent;
 import com.cpz.processing.controls.core.overlay.OverlayManager;
+import com.cpz.processing.controls.core.overlay.notification.NotificationManager;
+import com.cpz.processing.controls.core.overlay.notification.config.NotificationConfigLoader;
 import com.cpz.processing.controls.core.overlay.tooltip.input.TooltipInputLayer;
 import com.cpz.processing.controls.core.overlay.tooltip.util.TooltipOverlayController;
 import com.cpz.processing.controls.input.KeyboardState;
@@ -42,10 +45,12 @@ public class TemplateSketch extends PApplet {
     private Map<String, Indicator> indicators;
     private Map<String, Label> labels;
     private Map<String, NumericField> numericfields;
+    private Map<String, ProgressBar> progressbars;
     private Map<String, RadioGroup> radiogroups;
     private Map<String, Slider> sliders;
     private Map<String, TextField> textfields;
     private Map<String, Toggle> toggles;
+    private NotificationManager notifications;
 
     public void settings() {
         TemplateSketchConfig.settings(this);
@@ -55,7 +60,10 @@ public class TemplateSketch extends PApplet {
         TemplateSketchConfig.initialSetup(this);
         // input manager
         inputManager = new InputManager();
+        // overlay manager
         overlayManager = new OverlayManager();
+        notifications = new NotificationManager(this, overlayManager);
+        NotificationConfigLoader.apply(this, "config/notification.json", notifications);
         // controles
         controls = TemplateSketchConfig.setupControls(this, overlayManager, inputManager);
         buttons = TemplateSketchConfig.filterButtons(controls);
@@ -64,6 +72,7 @@ public class TemplateSketch extends PApplet {
         indicators = TemplateSketchConfig.filterIndicators(controls);
         labels = TemplateSketchConfig.filterLabels(controls);
         numericfields = TemplateSketchConfig.filterNumericfields(controls);
+        progressbars = TemplateSketchConfig.filterProgressbars(controls);
         radiogroups = TemplateSketchConfig.filterRadiogroups(controls);
         sliders = TemplateSketchConfig.filterSliders(controls);
         textfields = TemplateSketchConfig.filterTextfields(controls);
@@ -92,6 +101,7 @@ public class TemplateSketch extends PApplet {
     public void draw() {
         // update
         updateIndicatorStatus();
+        updateProgressBar();
         // draw
         background(32);
         drawCustomTooltipArea();
@@ -106,6 +116,13 @@ public class TemplateSketch extends PApplet {
 
     private void updateIndicatorStatus() {
         indicators.get("indTemplate").setOn(dropdowns.get("ddTemplate").isExpanded());
+    }
+
+    private void updateProgressBar() {
+        float progress = (sin(millis() * 0.001F) + 1.0F) * 0.5F;
+        progressbars.get("pbTemplate").setValue(progress);
+        progressbars.get("pbTemplate").setTooltipText("Simple ProgressBar: " + String.format("%.0f%%", progress * 100));
+        tooltips.refresh();
     }
 
     private void drawCustomTooltipArea() {
@@ -126,6 +143,13 @@ public class TemplateSketch extends PApplet {
     public void btnClicked(String code) {
         if (code == null) return;
         labels.get("lblTemplate").setText("btnClicked: " + code);
+        if (code.equals("btnTemplate")) {
+            int i = (int) random(4);
+            if (i == 0) notifications.info("Notificacion type: info");
+            else if (i == 1) notifications.success("Notificacion type: success");
+            else if (i == 2) notifications.warning("Notificacion type: warning");
+            else if (i == 3) notifications.error("Notificacion type: error");
+        }
     }
 
     public void chkClicked(String code, boolean status) {
@@ -202,6 +226,7 @@ public class TemplateSketch extends PApplet {
     public void keyTyped() {
         processingKeyboardAdapter.keyTyped(key, keyCode);
     }
+
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc="*** exit ***">
     public void exit() {
