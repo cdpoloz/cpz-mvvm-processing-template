@@ -1,6 +1,6 @@
 # CPZ MVVM Processing Template
 
-![Java](https://img.shields.io/badge/Java-17+-orange)
+![Java](https://img.shields.io/badge/Java-26+-orange)
 ![Processing](https://img.shields.io/badge/Processing-4.5.x-blue)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![License](https://img.shields.io/badge/license-Apache--2.0-lightgrey)
@@ -25,7 +25,7 @@ tooltip examples.
 
 ## Requirements
 
-- JDK 17 or newer.
+- JDK 26 or newer.
 - Maven.
 - A desktop environment capable of running Processing.
 
@@ -38,7 +38,7 @@ classpath.
 The current `pom.xml` declares:
 
 - `org.processing:core:4.5.2`
-- `io.github.cdpoloz:cpz-mvvm-processing-controls:0.5.0`
+- `io.github.cdpoloz:cpz-mvvm-processing-controls:0.9.7`
 - `io.github.cdpoloz:cpz-utils:0.2.3`
 - `org.jetbrains:annotations:26.0.2`
 
@@ -50,7 +50,7 @@ The project artifact is:
 <version>0.1.0</version>
 ```
 
-The compiler release is Java 17.
+The compiler release is Java 26.
 
 ## Run And Verify
 
